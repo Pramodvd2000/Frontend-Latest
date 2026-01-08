@@ -1,0 +1,596 @@
+import { useState } from 'react'
+import 'cleave.js/dist/addons/cleave-phone.us'
+import { useForm, Controller } from 'react-hook-form'
+import { Card, Form, Row, Col, Label, Button, CardBody, CardTitle, CardHeader, Input,Modal,ModalHeader,ModalBody  } from 'reactstrap'
+import '@styles/react/libs/flatpickr/flatpickr.scss'
+import '@styles/react/libs/react-select/_react-select.scss'
+import '@styles/react/pages/page-form-validation.scss'
+import 'ag-grid-enterprise'
+import { AgGridReact } from 'ag-grid-react'
+import '/node_modules/ag-grid-community/styles/ag-grid.css'
+import '/node_modules/ag-grid-community/styles/ag-theme-alpine.css'
+import { useRef, useEffect, useMemo, useCallback} from 'react';
+import { Accordion, AccordionBody, AccordionHeader, AccordionItem } from 'reactstrap'
+import API_URL2 from '../../../../config2'
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+const MySwal = withReactContent(Swal)
+import EditMarketGroup from "./editMarketGroup"
+import UploadDocs from "./uploadFile"
+import {Edit2,Search,} from "react-feather";
+
+const defaultValues = {
+  // hotelID: '',
+  marketGroup: '',
+  description: '',
+  activeStatus: null
+}
+
+const MarketGroup = () => {
+  const [open, setOpen] = useState('')
+  const [popUp, setPopUp] = useState(false);
+
+   // ** Hooks
+   const {
+    setError,
+    formState: { errors },
+  } = useForm();
+
+  const toggle = id => {
+    open === id ? setOpen() : setOpen(id)
+  }
+  // AG Grid
+  const [rowData, setRowData] = useState();
+
+    const gridRef = useRef();
+    const lookupValue = (mappings, key) => {
+      return mappings[key]
+    }
+
+    const colourMappings = {
+      1: 'Active',
+      0 : 'Inactive',
+    }
+    const extractKeys = (mappings) => {
+      return Object.keys(mappings)
+    }
+    const colourCodes = extractKeys(colourMappings)
+
+    const [marketGroup, setMarketGroup] = useState();
+  const [filldata, setfilldata] = useState(" ");
+
+  const EditData = (rowData)=>{
+    setfilldata(rowData);
+    setMarketGroup(!marketGroup)
+  }
+    const [columnDefs, setColumnDefs] = useState([
+        // { headerName: 'Hotel ID', field: 'hotelID', suppressSizeToFit: true, maxWidth: 160 },
+        { headerName: 'Market Group', field: 'marketGroup', suppressSizeToFit: true,cellStyle: {'textAlign': 'center','backgroundColor': '#F1E39B'}, maxWidth:160  },
+        { headerName: 'Description', field: 'description' ,cellStyle: {'textAlign': 'center','backgroundColor': 'pink'}, maxWidth:160 },
+        {headerName: 'Status', field: 'isActive', cellStyle: { 'text-align': 'center', 'background-color': '#F1E39B' },suppressSizeToFit: true,maxWidth: 150,editable: true,cellEditor: 'agSelectCellEditor', cellEditorParams: {values: colourCodes }, valueFormatter: (params) => { return lookupValue(colourMappings, params.value)},filter: 'agSetColumnFilter'},      
+        {
+          headerName: "Action",
+          field: "numAvlRooms",
+          suppressSizeToFit: true,
+          maxWidth: 120,
+          cellRendererFramework: (params) => (
+            <h5 >
+            <Edit2 style={{ height: "20px" }}  onClick={() =>{EditData(params.data)}} align='end' />                        
+          </h5>
+          ),
+        },
+    ]);
+
+    const [newActiveStatus, setNewActiveStatus] = useState(null);
+    const [roomClass, setRoomClassID] = useState(null);
+
+    const onCellValueChanged = useCallback(event => {
+     let isActive=Number(event.data.isActive); 
+     let OldValue=oldValue  
+     let ID=event.data['id']
+       const IDNumber = event.data.id;
+       setRoomClassID(IDNumber); 
+      let newActive = event.data.isActive;
+
+      if (event.data.isActive !== oldValue) {
+        const newActiveStatus = event.data.isActive;
+        setNewActiveStatus(newActiveStatus); 
+        const oldActiveStatus = oldValue;
+      setPopUp("Do You  Want to Change Market Group Status ?");
+      
+      } 
+
+    const updatedItem = JSON.stringify({            
+       isActive:event.newValue.split("(")[0]
+       })
+      //  console.log(updatedItem)
+       fetchx(API_URL2+`/updateMarketGroups?id=${event.data.id}`, {
+       method: 'PUT',
+       body: updatedItem,
+       headers: {
+       'Content-type': 'application/json'
+       }
+       })
+       .then((res) => res.json())
+       .then((post) => {
+        // const swalInstance = MySwal.fire({
+        //   text: 'Updated Active Status Successfully!',
+        //   icon: 'success',
+        //   buttonsStyling: false,
+        //   confirmButtonText: 'Close',
+        //   customClass: {
+        //     confirmButton: 'btn btn-danger'
+        //   }
+        // });
+        // swalInstance.then((result) => {
+        //   if (result.isConfirmed) {
+            // navigate('');
+        //   }
+        // }); 
+      //  console.log(post)
+       })
+       .catch((err) => {
+      //  console.log(err.message)
+       })         
+      }, [])
+
+
+function Confirm (event){
+const updatedItem = JSON.stringify({
+  isActive:newActiveStatus, 
+  id:roomClass
+})
+    // console.log(updatedItem)
+    fetchx(API_URL2+ `/updateMarketGroups`, {
+    method: 'PUT',
+    body: updatedItem,
+    headers: {
+    'Content-type': 'application/json'
+    }
+    })
+    .then((res) => res.json())
+    .then((post) => {
+      const swalInstance = MySwal.fire({
+          text: 'Updated Active Status Successfully!',
+          icon: 'success',
+          buttonsStyling: false,
+          confirmButtonText: 'Close',
+          allowOutsideClick: false, 
+          customClass: {
+            confirmButton: 'btn btn-danger'
+          }
+        });
+        swalInstance.then((result) => {
+          if (result.isConfirmed) {
+            navigate('');
+          }
+        });
+      // console.log(post)
+      if(post.statusCode === 200){
+      setPopUp(false)
+      fetchx(API_URL2 + '/getMarketGroup?hotelID=1')
+      .then(result => result.json())
+      .then(rowData =>{
+      // console.log(rowData['data'])     
+      }
+      )
+     }
+    })
+      .catch((err) => {
+     })
+   }
+
+
+    const [oldValue, setOldValue] = useState(null);
+    const defaultColDef = useMemo(() => (
+        {
+            sortable: true,
+            filter: true,
+            filterParams: {
+                buttons: ['apply', 'reset']
+            }
+        }
+    ));
+
+    const cellClickedListener = useCallback(event => {
+      const currentValue = event.data.isActive;
+     
+      setOldValue(currentValue); 
+  }, []);
+
+  // console.log("oldValue",oldValue)
+
+  const [hotelLive, sethotelLive] = useState(null);
+  
+  useEffect(() => {
+
+    fetchx(API_URL2 + "/getBusinessDate", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+    }).then((res) => res.json())
+      .then(postres => {
+        console.log(postres["data"][0]["id"])
+        sethotelLive(postres['data'][0]["isLive"])
+       
+      })
+
+        fetchx(API_URL2 +'/getMarketGroup?hotelID=1')
+            .then(result => result.json())
+            .then(rowData => setRowData(rowData['data']))
+    }, []);
+
+  // ** State
+  const [data, setData] = useState(null)
+
+  // ** Hooks
+  const { reset, handleSubmit, control } = useForm({ defaultValues })
+  let navigate = useNavigate();  
+
+
+  const onSubmit = data => {
+    setData(data)
+    if (data.marketGroup.length && data.description.length) {
+      // console.log(data)
+      let createmarketGroup = JSON.stringify({
+        // "hotelID": data.hotelID,
+        "marketGroup": data.marketGroup,
+        "description": data.description,
+        "isActive": 1
+      })
+      // console.log(createmarketGroup)
+      let res = fetchx(API_URL2 +'/addMarketGroup', {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: createmarketGroup
+      }).then(data => data.json())
+      .then((res) => {
+        // console.log(res);
+        if(res['statusCode']==200){
+          fetchx(API_URL2 +'/getMarketGroup?hotelID=1')
+          .then(result => result.json())
+          .then(rowData => {setRowData(rowData['data'])
+          // console.log(rowData['data'])
+          const swalInstance = MySwal.fire({
+            text: 'Market Group Added Successfully!',
+            icon: 'success',
+            buttonsStyling: false,
+            confirmButtonText: 'Close',
+            allowOutsideClick: false, 
+            customClass: {
+              confirmButton: 'btn btn-danger'
+            }
+          });
+          swalInstance.then((result) => {
+            if (result.isConfirmed) {
+              navigate('');
+            }
+          });
+        })
+        }
+        else{
+          const swalInstance = MySwal.fire({
+            text: res.message,
+            icon: 'error',
+            buttonsStyling: false,
+            confirmButtonText: 'Close',
+            allowOutsideClick: false, 
+            customClass: {
+              confirmButton: 'btn btn-danger'
+            }
+          });
+          swalInstance.then((result) => {
+            if (result.isConfirmed) {
+              navigate('');
+            }
+          });
+
+        }
+      });
+      // toast(
+      //   <div className='d-flex'>
+      //     <div className='me-1'>
+      //       <Avatar size='sm' color='success' icon={<Check size={12} />} />
+      //     </div>
+      //     <div className='d-flex flex-column'>
+      //       <h6>Form Submitted!</h6>
+      //      <h4>Market Group Submitted Successfull</h4>
+      //     </div>
+      //   </div>
+      // )
+    }
+  }
+
+  const handleReset = () => {
+    reset({
+      // hotelID: '',
+      marketGroup: '',
+      description: '',
+      activeStatus: ''
+    })
+  }
+  const onFilterTextBoxChanged = useCallback(() => {
+    gridRef.current.api.setQuickFilter(
+      document.getElementById("filter-text-box").value
+    );
+  }, []);
+
+
+
+  
+  const [showcard, setshowcard] = useState('')
+  const [files, setFiles] = useState('')
+    
+  const handleFile = () => {
+   setFiles((prevShowcard) => !prevShowcard);
+     setshowcard(false)
+  }
+     
+   const handleAddCard = () => {
+    setshowcard((prevShowcard) => !prevShowcard);
+    setFiles(false)
+    
+  }
+  
+  // Download Sample File
+  const handleDownload = async (filename) => {
+     try {
+       const response = await fetch(API_URL2 + '/downloadcsvfile', {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json'
+         },
+         body: JSON.stringify({ filename })
+       });
+   
+       if (!response.ok) {
+         throw new Error('Failed to download file');
+       }
+   
+       // Convert the response to blob
+       const blob = await response.blob();
+   
+       // Create a temporary URL for the blob
+       const url = window.URL.createObjectURL(blob);
+   
+       // Create a temporary anchor element to trigger the download
+       const link = document.createElement('a');
+       link.href = url;
+       link.download = filename; // Set the desired filename
+       document.body.appendChild(link);
+   
+       // Click the link to start the download
+       link.click();
+   
+       // Cleanup: remove the anchor element and revoke the temporary URL
+       document.body.removeChild(link);
+       window.URL.revokeObjectURL(url);
+     } catch (error) {
+       // Handle error
+       console.error('Error downloading file:', error.message);
+     }
+   };
+
+  // Download Excel File
+  const onBtnExport = () => {
+   const params = {
+     fileName: 'MarketGroup.xlsx',
+     sheetName: 'Sheet1',
+   };
+   gridRef.current.api.exportDataAsExcel(params);
+  };
+
+
+  return (
+    <div> 
+
+   <div>
+        <Modal  isOpen={marketGroup} toggle={() => setMarketGroup(!marketGroup)}className="modal-lg"  >
+          <ModalHeader className="modal-lg"toggle={() => setMarketGroup(!marketGroup)} >
+           Edit Market Group Details
+          </ModalHeader>
+          <ModalBody className="pb-3 px-sm-1 mx-20">            
+            <EditMarketGroup data1={filldata} />
+          </ModalBody>
+        </Modal>
+      </div>
+
+      {hotelLive === 0 && (<Card>
+      <CardHeader><h4><b> Add Market Group</b></h4></CardHeader>
+     </Card>)}
+      {hotelLive === 0 && ( <p style={{color: "grey"}}> 
+      <b><h4> Instructions:  </h4> </b>
+      1.Please refer to the sample file before uploading the data. You can access the sample file by clicking the  <b>"Market Group File" </b> button. Please ensure that data insertion follows the established pattern.<br/> Kindly refrain from altering the file structure.<br/>
+      2.Before adding new data, please ensure to delete all existing data in the CSV file except for the header row.<br/>
+      3.If a duplicate entry is found, please remove the existing data and insert the .csv file without any duplicates.<br/>
+      4.Please click the "Edit" <Edit2 style={{ height: "10px" }} />button to modify the data. Once data is inserted, it cannot be edited through the CSV file.<br/>
+      5.Finally, remember to save the file in .csv format for proper upload.<br/>
+    </p>)}
+    <br/>
+    {/* Upload Document */}
+           
+    {hotelLive === 0 && (
+        <div> 
+          <br/>
+          <UploadDocs/>
+      </div>)}
+
+
+
+
+      <div className="disabled-animation-modal">
+ <Modal
+ isOpen={popUp}
+ toggle={() => setPopUp(!popUp)}
+ className="modal-sm"
+ >
+ 
+ {/*onClosed={onDiscard}*/}
+ <ModalHeader
+ className="modal-sm"
+ toggle={() => {
+ setPopUp(!popUp);
+ }}
+ >
+ Need To Check..
+ </ModalHeader>
+ <ModalBody className="pb-3 px-sm-2 mx-20">
+ <div>
+ <b>{popUp}</b>
+ <br></br> <br></br>
+ <div className="d-flex">
+ <Button color="primary" className="me-1" onClick={() => Confirm()} >
+  Confirm
+ </Button>
+ <Button color="danger" className="me-1" onClick={() => {  setPopUp(false) , navigate('');  }} >
+    Cancel
+ </Button>
+ </div>
+ </div>
+ </ModalBody>
+ </Modal>
+ </div>
+ 
+    <div>
+    { hotelLive === 1 && (<Accordion open={open} toggle={toggle}>
+      <AccordionItem>
+        <AccordionHeader targetId='1'><h4><b>Add Market Group </b> </h4></AccordionHeader>
+        <AccordionBody accordionId='1'>
+       <Card>
+      <CardHeader>
+        <CardTitle tag='h4'>Market Group</CardTitle>
+      </CardHeader>
+      <CardBody>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <Row>            
+            <Col md='4' sm='12'>             
+              <div className="mb-1">
+                    <Label className="form-label" for="marketGroup">
+                      Market Group <spam style={{color:'red'}}>*</spam>
+                    </Label>
+                    <Controller
+                      defaultValue=""
+                      control={control}
+                      id="marketGroup"
+                      name="marketGroup"
+                      render={({ field }) => (
+                        <Input
+                        // pattern="[a-zA-Z ]*" title="Type Only Alphabets"  
+                        required
+                          placeholder="Market Group"
+                        
+                          invalid={errors.marketGroup && true}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+            </Col>
+            <Col md='4' sm='12'>
+            <div className="mb-1">
+                    <Label className="form-label" for="description">
+                      Description <spam style={{color:'red'}}>*</spam>
+                    </Label>
+                    <Controller
+                      defaultValue=""
+                      control={control}
+                      id="description"
+                      name="description"
+                      render={({ field }) => (
+                        <Input
+                          placeholder="Description"
+                        
+                          invalid={errors.description && true}
+                          {...field}
+                        />
+                      )}
+                    />
+                  </div>
+            </Col>
+            {/* <Col md='4' sm='12'>
+              <div className='mb-1'>
+                <Label className='form-label' for='activeStatus'>
+                  Active Status <spam style={{color:'red'}}>*</spam>
+                </Label>
+                <Controller
+                  id='activeStatus'
+                  control={control}
+                  name='activeStatus'
+                  render={({ field }) => (
+                    <Select
+                    required
+                      isClearable
+                      options={colourOptions}
+                      classNamePrefix='select'
+                      theme={selectThemeColors}
+                      className={classnames('react-select', { 'is-invalid': data !== null && data.ReactSelect === null })}
+                      {...field}
+                    />
+                  )}
+                />
+              </div>
+            </Col> */}
+
+
+            <div className='d-flex'>
+              <Button className='me-1' color='primary' type='submit'>
+                Submit
+              </Button>
+              <Button outline color='secondary' type='reset' onClick={handleReset}>
+                Reset
+              </Button>
+            </div>
+          </Row>
+        </Form>
+      </CardBody>
+    </Card>
+            </AccordionBody>
+      </AccordionItem>
+      </Accordion>)}
+</div>
+
+{/* Search Bar */}
+<div>
+        <Row>
+        <Col md="3" sm="12" className="mb-1">
+          <Label className="form-label" for="fullName">
+            Search
+          </Label>
+          <Input
+            type="text"
+            id="filter-text-box"
+            placeholder="Filter..."
+            onInput={onFilterTextBoxChanged}
+          />
+        </Col>
+
+   
+        {/*  <Download Sample File/> */}
+      <div align="end" className="buttons">
+        { hotelLive === 1 && (<Button className='me-1' color='primary' type='submit' onClick={onBtnExport}> Download Excel </Button>)}
+      </div>      
+        </Row>       
+      </div>
+
+      <br/>
+      <br/>
+
+      <div className="ag-theme-alpine" style={{ height: 540}}>
+        <AgGridReact 
+            ref={gridRef}
+            rowData={rowData} columnDefs={columnDefs}
+            animateRows={true} rowSelection='multiple'
+            onCellClicked={cellClickedListener}
+            onCellValueChanged={onCellValueChanged}
+            // paginationAutoPageSize = 'true'
+            paginationPageSize= '10'
+            pagination = 'true'
+            defaultColDef={defaultColDef}
+            headerColor="ddw-primary"
+            
+            />
+      </div>
+    </div>
+  )
+}
+export default MarketGroup

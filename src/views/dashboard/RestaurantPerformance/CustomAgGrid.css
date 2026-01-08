@@ -1,0 +1,18 @@
+.custom-ag-grid .ag-header-cell,
+.custom-ag-grid .ag-row {
+  font-size: 24px; /* Adjust font size as needed */
+}
+
+/* .custom-ag-grid .ag-header-cell-text,
+.custom-ag-grid 
+.ag-row {
+  font-weight: bold;
+} */
+
+.custom-ag-grid .ag-cell-value {
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+.custom-ag-grid .ag-row-group-cell {
+  width: auto !important; /* Set width to auto to fit content */
+}

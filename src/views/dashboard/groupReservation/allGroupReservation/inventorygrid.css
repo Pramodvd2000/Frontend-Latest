@@ -1,0 +1,274 @@
+ .release-pending-inventory {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+  }
+
+  th, td {
+    border: 1px solid #dee2e6;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .fixed-col {
+    position: sticky;
+    background-color: #f3f3f3;
+    left: 0;
+    z-index: 1;
+    text-align: center;
+    border-left:2px solid #c7c7c7;
+  }
+  /* .fixed-roomtype {
+    position: sticky;
+    background-color: #f3f3f3;
+    left: 0;
+    z-index: 1;
+    text-align: center;
+    border-left:2px solid #c7c7c7;
+    border-right:2px solid #c7c7c7;
+
+  } */
+  .fixed-col1 {
+    background-color: #f3f3f3;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    text-align: center;
+    border-top:2px solid #c7c7c7;
+    border-bottom:2px solid #c7c7c7;
+    border-right:2px solid #c7c7c7;
+    border-left:2px solid #c7c7c7;
+  }
+  .total-row {
+    background-color: #f1f3f5;
+    font-weight: bold;
+  }
+
+  .release-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .release-button:hover {
+    background-color: #0056b3;
+  }
+
+
+  .release-pending-inventory {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    margin-bottom: 20px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  
+  th,
+  td {
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+    text-align: left;
+  }
+  
+ th.fixed-col {
+  left: 0;
+  background-color: #f3f3f3;
+  z-index: 1;
+  }
+  td.fixed-col {
+    left: 0;
+    background-color: #f8f9fa;
+    z-index: 1;
+  }
+  
+  th {
+    background-color: #f3f3f3;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .date-col {
+    text-align: center;
+    border-top:2px solid #c7c7c7;
+    border-bottom:2px solid #c7c7c7;
+    border-right:2px solid #c7c7c7;
+    border-left:2px solid #c7c7c7;
+  }
+  
+  .date-col::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-bottom: 2px solid #dee2e6;
+  }
+  
+  .total-row {
+    font-weight: bold;
+    background-color: #f3f3f3;
+    color: #333;
+  }
+  
+  .release-button {
+    background-color: #f9c100;
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .release-button:hover {
+    background-color: #ffd33d;
+  }
+
+  .booked-highlight-th {
+    border-left: 2px solid #c7c7c7;
+    text-align: center;  
+    color: #8b6313;
+  }
+  
+  .pending-highlight-th {
+    border-right: 2px solid #c7c7c7;
+    text-align: center;
+    color: #8b6313;
+  }
+  .allocated-highlight-th {
+    text-align: center;
+    color: #8b6313;
+  }
+  .booked-highlight {
+    border-left: 2px solid #c7c7c7;
+    text-align: center;  
+  }
+  
+  .pending-highlight {
+    border-right: 2px solid #c7c7c7;
+    text-align: center;
+  }
+  .allocated-highlight {
+    text-align: center;
+  }
+  .required-highlight {
+    text-align: center;
+  }
+  .releasependingcss {
+    font-size: 18px;
+  }
+
+.table-wrapper {
+  overflow-x: auto; 
+  display: block;
+  width: 100%;
+}
+
+thead {
+  position: sticky;
+}
+
+
+.fixed-col, .fixed-col1 {
+  position: sticky;
+  left: 0;
+  background-color: #f3f3f3;
+  z-index: 2;
+  font-weight: 600;
+  border-right: 2px solid #c7c7c7 !important;
+}
+.fixed-col2 {
+  position: sticky;
+  left: 0;
+  background-color: #f3f3f3;
+  z-index: 2;
+  font-weight: 600;
+  border-left:2px solid #c7c7c7;
+  border-right:2px solid #c7c7c7;
+}
+
+/* aggrid........................... */
+.center-header {
+  text-align: center;
+  align-items: center;
+}
+
+.booked-highlight {
+  background-color: #d1e7dd;
+  text-align: center;
+
+}
+
+.required-highlight {
+  background-color: #fff3cd;
+  text-align: center;
+
+}
+
+.pending-highlight {
+  background-color: #f8d7da;
+  text-align: center;
+}
+
+/* .fixed-roomtype {
+  font-weight: bold;
+} */
+
+.total-row {
+  font-weight: bold;
+  background-color: #e9ecef;
+}
+.center-header {
+  text-align: center !important;
+}
+
+* AG Grid Styling */
+.centered-date-header {
+  text-align: center !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.center-header {
+  text-align: center !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* Additional styles to ensure centering */
+.ag-header-cell-text {
+  text-align: center !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.ag-header-group-cell-label {
+  justify-content: center !important;
+}

@@ -1,0 +1,333 @@
+.frontdesk{
+
+    .cardsize{
+        padding-right: 15px;
+        display: flex;
+        justify-content: flex-start;
+        padding-top: 10px;
+
+    .card{
+        display: flex;
+        justify-content: flex-start;
+        height: 110px;
+        width: 161.12px;
+        padding-right: 10px;
+        display: flex;
+        flex-direction: row;
+        font-weight: 700;
+        font-size: 25px;
+        line-height: 22px;
+        align-items: center;
+        .card1{
+            color: #006400;        //#5DF400
+        }
+        .card2{
+            color: #F40000;        
+        }
+        .card3{
+            color: #F4A100;        
+        }
+        .card4{
+            color: #0062F4;        
+        }
+    }
+}
+    // Reservation title css
+    .title{
+        display: flex;
+        background-color: #0057FF;
+        background: rgba(73, 63, 174, 0.77);
+        color: white;
+        padding-left: 15px;
+        font-weight: 600;
+
+        .printer{
+            margin-left:22em;
+            position: absolute;
+            left: 36%;
+            right: 29.17%;
+            top: 292px;    //for changing position
+            bottom: 50.5%;
+            width: 20px;
+            height: 30px;
+
+        }
+        .refresh{
+            margin-left:22em;
+            position: absolute;
+            left: 40%;
+            right: 29.17%;
+            top: 292px;    //for changing position
+            bottom: 50.5%;
+            width: 20px;
+            height: 30px;
+
+        }
+    }
+    .printer{
+        margin-left:22em;
+        position: absolute;
+        top: 110px;
+        width: 20px;
+        height: 30px;
+        left: 22.88%;
+        // left: 42%;
+        right: 29.17%;
+
+    }
+    .refresh{
+        margin-left:22em;
+        position: absolute;
+        top: 110px;
+        width: 20px;
+        height: 30px;
+        left: 26.18%;
+        // left: 46%;
+        right: 29.17%;
+        cursor: pointer;
+
+    }
+    .reservation-top-button{
+        margin-left:39em;
+        // margin-top: 10em;
+        position: absolute;
+        top: 110px;
+        width: 180px;
+        height: 34px;
+        left: 30%;
+        // left: 47.4%;
+        right: 29.17%;
+    }
+    //  top tab buttons css
+    .topbuttons{
+        color: #A8AAAE;  
+        font-family: 'Montserrat', 'Helvetica', 'Arial', 'serif';
+        
+        // individual button
+    .topbutton{
+        display: flex;
+        text-align: center;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: center;
+        // background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), #7367F0;
+        box-shadow: 0px 2px 4px rgba(165, 163, 174, 0.3);   
+        border-radius: 6px;
+        color: white;
+        font-weight: 400;
+        box-shadow: none;
+        gap: 10px;
+        & > * {
+        margin-right: 1.5rem;
+        margin-top: 1.5rem;
+        }
+        color: #A8AAAE  ;
+        font-weight: 700;
+        font-size: 13px;
+        line-height: 15px;
+        letter-spacing: 0.43px;
+        flex-wrap: wrap;
+        margin-left: 0px;
+        padding-left: 0px;
+        fill-rule: initial;
+        font-weight:bold;
+        
+    }
+}
+ // Table content css
+    .content{
+        font-family: 'Montserrat', 'Helvetica', 'Arial', 'serif';
+        font-weight: 600;
+        width: 120px;
+        height: 15px;
+        font-size: 13px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+    // table data css
+    .tabledata{
+        // display: flex;
+        font-family: 'Montserrat', 'Helvetica', 'Arial', 'serif';
+        align-items: center;
+        position: relative;
+        font-style: normal;
+        font-weight: 300;
+        width: 60px;
+        height: 30px;
+        flex: none;
+        order: 1;
+        flex-grow: 0;
+        font-weight: 600;
+        font-size: 15px;
+        line-height: 22px;
+        .status{
+            font-weight: 700;
+            font-size: 13px;
+            line-height: 20px;
+            color: #4B465C;
+
+        }
+    }
+    // Inside order status buttons
+    .tablebuttons{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    
+    .check-in{
+        // padding-left:0px;
+        // font-size: small;
+        border-radius: 6px;
+        color: white;
+        width: 100px;
+        height: 25px;
+        font-size: 200;
+        // background-color: #493FAE;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), #7367F0;
+        border: 1px solid #493FAE;
+        cursor: pointer;
+        
+        align-items: center;
+    
+        // position: absolute;
+    }
+    .check-in::before{
+        background-color: 1px solid #493FAE;
+    }
+    .others{
+        // padding-left:0px;
+        font-size: small;
+        border-radius: 6px;
+        color: white;
+        // background-color: #493FAE;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), #28C76F;
+        border: 1px solid #28C76F;
+        cursor: pointer;
+        width: 100px;
+        align-items: center;
+        // position: absolute;  
+    }
+   
+}
+
+}
+.othersbutton{
+    display: flex;
+    // flex-direction: row;
+    // align-items: center;
+    // font-weight: 500;
+    // gap: 10px;
+    // font-size: 15px;
+    // line-height: 18px;
+    // box-shadow: 0px 2px 4px rgba(165, 163, 174, 0.3);
+    // border-radius: 6px;
+    // padding-right: 31px;
+    // padding-left: 27px;
+    // padding-bottom: 26px;
+    // padding-top: 10px;
+    padding-left: 30px;
+    padding-bottom: 10px;
+
+    .assign{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 0px;
+        width: 152px;
+        height: 38px;
+        // position: absolute;
+        left: 7.03%;
+        right: 53.39%;
+        top: 28.32%;
+        bottom: 49.71%;
+    }
+
+    .change{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 0px;
+        width: 152px;
+        height: 38px;
+        // position: absolute;
+        left: 54.69%;
+        right: 5.73%;
+        top: 28.32%;
+        bottom: 49.71%;
+    
+    }
+
+    .packages{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 0px;
+        width: 152px;
+        height: 38px;
+        // position: absolute;
+        left: 7.03%;
+        right: 53.39%;
+        top: 65.32%;
+        bottom: 12.72%;
+    }
+
+    .sharer{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 0px;
+        width: 152px;
+        height: 38px;
+        // position: relative;
+        left: 54.69%;
+        right: 5.73%;
+        top: 65.32%;
+        bottom: 12.72%;
+        background: #7846B9;
+        box-shadow: 0px 2px 4px rgba(165, 163, 174, 0.3);
+        border-radius: 6px;
+    }
+
+
+}
+
+.cardBody{
+    padding-top:14px ;
+    padding-right: 5px;
+    padding-left: 4%;
+    white-space: nowrap;
+}
+
+.hoverUnderline{
+    padding-left: 10%;
+    cursor: pointer;
+    background: none;
+    // color: white;
+}
+
+.hoverUnderline:hover{
+    color: #0062F4;
+    text-decoration: underline;
+}
+
+
+// .hoverUnderline::after{
+//     content: '';
+//     height: 2px;
+//     width: 0%;
+//     background-color: #0062F4;
+//     display: block;
+//     transition: .5s ease-in-out;
+// }
+// .hoverUnderline:hover::after{
+//     content: '';
+//     height: 2px;
+//     width: 100%;
+//     background-color: blue;
+//     // display: block;
+// }

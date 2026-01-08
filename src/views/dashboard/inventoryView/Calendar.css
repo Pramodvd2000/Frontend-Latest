@@ -1,0 +1,418 @@
+/* .fc { 
+    font-family: "Poppins", sans-serif;
+  }
+  
+  .fc-toolbar {
+    background: #007bff;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+  }
+  
+  .fc-daygrid-day {
+    border: 1px solid #ddd;
+  }
+  
+  .fc-day-today {
+    background: rgba(0, 123, 255, 0.1) !important;
+  } */
+  
+  /* .fc-event {
+    background: #007bff !important;
+    border-radius: 5px;
+    padding: 3px;
+  }
+  
+  .fc-button {
+    background: #0056b3 !important;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+   */
+  /* .fc-resource-timeline .fc-datagrid-cell-frame {
+    padding: 5px 10px !important;  
+    font-size: 14px !important;
+  } */
+  
+  /* .fc-resource-timeline .fc-datagrid-cell {
+    min-width: 120px !important;  
+  } */
+  
+/* 
+
+  .fc {
+    font-family: "Arial", sans-serif;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .fc .fc-toolbar {
+    background: #007bff;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .fc .fc-toolbar-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .fc .fc-button {
+    background-color: #0056b3;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+  }
+  
+  .fc .fc-button:hover {
+    background-color: #003d80;
+  }
+  
+  .fc .fc-resource-area {
+    background-color: #f1f3f5;
+    font-size: 14px;
+  }
+  
+  .fc .fc-timeline-event {
+    border-radius: 6px;
+    padding: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .fc .fc-timeline-event.green {
+    background-color: #28a745 !important;
+    color: white;
+  }
+  
+  .fc .fc-timeline-event.red {
+    background-color: #dc3545 !important;
+    color: white;
+  }
+  
+  .fc-event:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+    transition: all 0.2s ease-in-out;
+  }
+  
+  */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /* Working */
+/* 
+  .fc {
+    font-family: "Arial", sans-serif;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .fc .fc-toolbar {
+    background: #f8f9fa;
+    color: #333;
+    padding: 10px;
+    border-radius: 5px 5px 0 0;
+    margin-bottom: 0;
+  }
+  
+  .fc .fc-toolbar-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .fc .fc-button {
+    background-color: #e9ecef;
+    border: 1px solid #dee2e6;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .fc .fc-button:hover {
+    background-color: #dee2e6;
+  }
+  
+  .fc .fc-button-primary:not(:disabled).fc-button-active {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .fc .fc-resource-area {
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+    font-size: 14px;
+  }
+  
+  .fc .fc-timeline-header {
+    background-color: #f8f9fa;
+  }
+  
+  .fc .fc-timeline-slot {
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .fc .fc-timeline-event {
+    border-radius: 4px;
+    padding: 2px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+  }
+  
+  .fc .fc-scrollgrid-section-body tr {
+    height: 40px;
+  }
+  
+  .fc .fc-resource-timeline-divider {
+    width: 6px;
+  }
+  
+  .fc-event:hover {
+    opacity: 0.9;
+  }
+  
+  .fc .fc-timeline-slot-frame {
+    text-align: center;
+    padding: 4px;
+  }
+  
+  .fc .fc-timeline-slot-cushion {
+    font-size: 12px;
+    color: #495057;
+  } */
+
+/* 
+  .fc {
+    font-family: "Arial", sans-serif;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .fc .fc-scrollgrid {
+    border: 1px solid #ddd;
+  }
+  
+  .fc .fc-scrollgrid-section-header > td {
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .fc .fc-scrollgrid-section-body > td {
+    border-bottom: 1px solid #eee;
+  }
+  
+  .fc .fc-resource-timeline-divider {
+    border-right: 1px solid #ddd;
+  }
+  
+  .fc .fc-timeline-slot {
+    border-right: 1px solid #eee;
+  }
+  
+  .fc .fc-timeline-slot.fc-timeline-slot-label {
+    border-right: 1px solid #ddd;
+  }
+  
+  .fc .fc-timeline-slot.fc-timeline-slot-lane {
+    border-right: 1px solid #eee;
+  }
+  
+  .fc .fc-resource-area {
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
+  }
+  
+  .fc .fc-resource-header {
+    background-color: #f1f3f5;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .fc .fc-timeline-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .fc .fc-timeline-header-row.fc-timeline-header-row-chrono .fc-timeline-slot-frame {
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .fc .fc-datagrid-cell-frame {
+    border-bottom: 1px solid #eee;
+  }
+  
+  .fc .fc-timeline-lane-frame {
+    border-bottom: 1px solid #eee;
+  }
+  
+  .fc .fc-button {
+    background-color: #e9ecef;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .fc .fc-button:hover {
+    background-color: #dee2e6;
+  }
+  
+  .fc .fc-button-primary:not(:disabled).fc-button-active {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .fc .fc-timeline-event {
+    border-radius: 4px;
+    padding: 2px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    margin: 1px;
+  }
+  
+  .fc-event:hover {
+    opacity: 0.9;
+  }
+  
+  .fc-scroller::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  
+  .fc-scroller::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .fc-scroller::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+  
+  .fc-scroller::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  } */
+
+
+/* Calendar.css with vertical grids */
+.fc {
+  font-size: 12px;
+}
+
+/* Vertical grid lines */
+.fc .fc-scrollgrid-section-body td,
+.fc .fc-scrollgrid-section-header td {
+  border-right: 1px solid #e0e0e0 !important;
+}
+
+/* Horizontal grid lines */
+.fc .fc-scrollgrid-section-body td {
+  border-bottom: 1px solid #e0e0e0 !important;
+}
+
+/* Header styling */
+.fc .fc-toolbar {
+  padding: 5px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 14px;
+}
+
+/* Button styling */
+.fc .fc-button {
+  padding: 3px 6px;
+  font-size: 12px;
+  border: 1px solid #ddd;
+}
+
+/* Resource area */
+.fc .fc-resource-area {
+  width: 120px;
+  border-right: 1px solid #ddd;
+}
+
+.fc .fc-resource-header {
+  padding: 2px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Timeline slots */
+.fc .fc-timeline-slot {
+  height: 24px;
+}
+
+.fc .fc-timeline-slot-frame {
+  padding: 0 2px;
+}
+
+/* Events */
+.fc .fc-timeline-event {
+  margin: 0 1px;
+  padding: 0;
+}
+
+/* Grid lines */
+.fc .fc-scrollgrid-sync-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Cell styling */
+.fc .fc-datagrid-cell-frame,
+.fc .fc-timeline-lane-frame {
+  padding: 0;
+  height: 24px;
+}
+
+/* Compact resource labels */
+.fc .fc-resource {
+  min-height: 24px;
+}
+
+/* Timeline divider */
+.fc .fc-resource-timeline-divider {
+  width: 3px;
+}
+
+/* Scrollbar styling */
+.fc-scroller::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.fc-scroller::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.fc-scroller::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+#reactSchedulerOutsideWrapper {
+  margin-top: 8rem !important; 
+}

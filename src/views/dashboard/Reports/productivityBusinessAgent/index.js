@@ -1,0 +1,1222 @@
+// ** React Imports
+import { useState } from 'react'
+import { StrictMode } from 'react'
+import classnames from 'classnames'
+import Flatpickr from 'react-flatpickr'
+import 'cleave.js/dist/addons/cleave-phone.us'
+import { useForm, Controller } from 'react-hook-form'
+import Moment from 'moment'
+import { Card, Form, Row, Col, Label, Button, CardBody, CardTitle, CardHeader, Modal, ModalBody, ModalHeader, Input } from 'reactstrap'
+import '@styles/react/libs/flatpickr/flatpickr.scss'
+import '@styles/react/libs/react-select/_react-select.scss'
+import '@styles/react/pages/page-form-validation.scss'
+'use strict';
+import { createRoot } from 'react-dom/client';
+
+// Import ag-grid
+import 'ag-grid-enterprise'
+import { AgGridReact } from 'ag-grid-react'
+import '/node_modules/ag-grid-community/styles/ag-grid.css'
+import '/node_modules/ag-grid-community/styles/ag-theme-alpine.css'
+
+import { useRef, useEffect, useMemo, useCallback } from 'react';
+import DASHBOARD_URL from '../../../../dashboard'
+import { useNavigate } from 'react-router-dom';
+// ** Third Party Components
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import Select from "react-select";
+import { selectThemeColors } from "@utils";
+
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import { saveAs } from 'file-saver';
+import 'jspdf-autotable';
+import Logo from '@src/assets/images/logo/oterra.jpg'
+import { post } from 'jquery'
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress'
+import ExcelJS from 'exceljs';
+
+
+const MySwal = withReactContent(Swal)
+
+const defaultValues = {
+    frmdate: ''
+}
+
+const ProductivityBusinessAent = () => {
+
+    // AG Grid
+    // const [rowData, setRowData] = useState();
+    const [rowData, setrowData] = useState([]);
+    const { reset, handleSubmit, control, watch } = useForm({ defaultValues })
+    const [selectedOption, setselectedOption] = useState('Date')
+    const [hotelDetails, setHotelDetails] = useState()
+    const [SelectedForColumn, setSelectedForColumn] = useState();
+    const [open, setOpen] = useState(false)
+    const [filterMarket, setfilterMarket] = useState(null);
+    const [isButtonClicked, setIsButtonClicked] = useState(false);
+
+
+
+
+    const frmdate = watch('frmdate');
+    const optionsToDate = {
+        minDate: (Moment(String(new Date(frmdate))).format('YYYY-MM-DD'))
+    };
+    const gridRef = useRef();
+
+    useEffect(() => {
+        const hotelIDData = JSON.stringify({
+            hotelID: 1
+        })
+        fetchx(DASHBOARD_URL + "/getBusinessDate", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: hotelIDData
+        }).then((res) => res.json())
+            .then(postres => {
+                if (postres.statusCode === 200) {
+                    setHotelDetails(postres.data)
+                }
+            })
+    }, []);
+    // const gridRef = useRef();
+
+
+    const CustomHeaderComponentRate1 = () => {
+        return (
+            <div>
+                Nights
+            </div>
+        );
+    };
+
+    const CustomHeaderComponentRate2 = () => {
+        return (
+            <div>
+                Total Revenue
+            </div>
+        );
+    };
+
+    const CustomHeaderComponentRate3 = () => {
+        return (
+            <div>
+                F&B Revenue
+            </div>
+        );
+    };
+    const CustomHeaderComponentRate4 = () => {
+        return (
+            <div>
+                Tax(for future)
+            </div>
+        );
+    };
+
+    const CustomHeaderComponentRate5 = () => {
+        return (
+            <div>
+                ARR
+            </div>
+        );
+    };
+    const CustomHeaderComponentRate6 = () => {
+        return (
+            <div>
+                Room Revenue
+            </div>
+        );
+    };
+    const CustomHeaderComponentRate7 = () => {
+        return (
+            <div>
+                Package Revenue
+            </div>
+        );
+    };
+
+    const handleTransferTransaction = (event) => {
+        console.log(event.target.value)
+        setselectedOption(event.target.value)
+    }
+
+
+
+
+    const [columnDefs, setColumnDefs] = useState([
+        {
+            headerName: "Date",
+            field: "date",
+            maxWidth: 120,
+            sort: 'asc',
+            cellRenderer: (params) => {
+                //   if (params.data && params.data.date) {
+                //     console.log("SelectedForColumn", SelectedForColumn);
+                //     let formattedDate = "";
+                //     if (SelectedForColumn === '0' && SelectedForColumn !== undefined) {
+                //     //   formattedDate = Moment(params.data.date).format("DD.MM.YYYY");
+                //           formattedDate = Moment(params.data.date, ["YYYY-MM-DD", "DD.MM.YYYY", "MM-DD-YYYY"]).format("DD.MM.YYYY");
+
+                //     } else if (SelectedForColumn === '1' && SelectedForColumn !== undefined) {
+                //       formattedDate = Moment(params.data.date).format("MMM YYYY");
+                //     } else {
+                //     //   formattedDate = Moment(params.data.date).format("DD.MM.YYYY");
+                //           formattedDate = Moment(params.data.date, ["YYYY-MM-DD", "DD.MM.YYYY", "MM-DD-YYYY"]).format("DD.MM.YYYY");
+
+                //     }
+                //     return formattedDate;
+                //   }
+                if (params.data && params.data.date) {
+                    // Handle both YYYY-MM and DD.MM.YYYY formats
+                    const format = selectedOption === "Date" ? "DD.MM.YYYY" : "MMM-YYYY";
+                    return Moment(params.data.date, ["YYYY-MM-DD", "YYYY-MM", "DD.MM.YYYY"]).format(format);
+                }
+                else {
+                    return "";
+                }
+            },
+        },
+        { headerName: 'Agent', field: 'accountName', suppressSizeToFit: true, width: 250, rowGroup: true },
+        { headerName: 'Account Type', field: 'accountType', suppressSizeToFit: true, width: 100 },
+        { headerName: 'Address', field: 'address', suppressSizeToFit: true, maxWidth: 180 },
+        {
+            headerName: 'Nights', field: 'No_of_Nights', suppressSizeToFit: true, maxWidth: 120, aggFunc: 'sum', headerComponentFramework: CustomHeaderComponentRate1,
+            sort: 'desc', // Set the default sorting order to ascending
+            sortedAt: 1,
+
+        },
+        { headerName: 'Room Revenue', field: 'room_revenue', suppressSizeToFit: true, maxWidth: 130, aggFunc: 'sum', headerComponentFramework: CustomHeaderComponentRate6, valueFormatter: formatNumber, },
+        { headerName: 'Package Revenue', field: 'package_revenue', suppressSizeToFit: true, maxWidth: 130, aggFunc: 'sum', headerComponentFramework: CustomHeaderComponentRate7, valueFormatter: formatNumber, },
+        {
+            headerName: 'ARR', field: 'ADR', suppressSizeToFit: true, maxWidth: 120,      // Custom aggregation function for ADR
+            headerComponentFramework: CustomHeaderComponentRate5, valueGetter: params => {
+                if (params.node.aggData) {
+
+                    const totalRoomRevenue = params.node.aggData.room_revenue;
+                    const totalNights = params.node.aggData.No_of_Nights;
+                    return totalNights !== 0 ? totalRoomRevenue / totalNights : 0;
+                }
+                return params.data.ADR;
+
+            }, valueFormatter: formatNumber
+        },
+
+        { headerName: 'F&B Revenue', field: 'f_b_revenue', suppressSizeToFit: true, maxWidth: 120, aggFunc: 'sum', headerComponentFramework: CustomHeaderComponentRate3, valueFormatter: formatNumber, },
+        { headerName: 'Tax(for future)', field: 'tax_for_future', suppressSizeToFit: true, maxWidth: 130, aggFunc: 'sum', headerComponentFramework: CustomHeaderComponentRate4, valueFormatter: formatNumber, },
+
+
+        { headerName: 'Total Revenue', field: 'revenue', suppressSizeToFit: true, maxWidth: 120, aggFunc: 'sum', headerComponentFramework: CustomHeaderComponentRate2, valueFormatter: formatNumber, },
+    ]);
+
+    // Assuming rowData is an array of row data for the current group
+    function customAvg(params) {
+        // Calculate total room revenue
+        const totalRoomRevenue = params.data.room_revenue;
+
+        // Calculate total number of nights
+        const totalNights = params.data.No_of_Nights;
+
+        // Calculate ADR (Average Daily Rate)
+        const adr = totalNights !== 0 ? totalRoomRevenue / totalNights : 0;
+
+        return adr;
+    }
+
+
+
+
+
+
+    const gridOptions = {
+        enableRowGroup: true,
+        columnDefs: columnDefs,
+
+        // ... other options
+    };
+
+    const defaultColDef = useMemo(() => (
+        {
+            sortable: true,
+            filter: true,
+            filterParams: {
+                buttons: ['apply', 'reset']
+            }
+        }
+    ));
+
+    const autoGroupColumnDef = useMemo(() => {
+        return {
+            minWidth: 300,
+        };
+    }, []);
+
+    const cellClickedListener = useCallback(event => {
+        console.log('cellClicked', event.data);
+
+    }, []);
+
+
+    // ** State
+    const [data, setData] = useState(null)
+    const [flag, setFlag] = useState(false)
+    const [flag1, setflag1] = useState(false)
+    const [ShowDummyInvPDF, setShowDummyInvPDF] = useState(false)
+    const [DummyInvURL, setDummyInvURL] = useState([])
+    const [companyID, setCompanyID] = useState([]);
+    const [filterFromDate, setFilterFromDate] = useState(null);
+    const [filterToDate, setFilterToDate] = useState(null);
+    const [companyData, setCompanyData] = useState(null);
+    const [companyNames, setCompanyNames] = useState("All");
+
+
+
+
+    const totalRow = {
+        accountName: "Grand Total",
+        No_of_Nights: "sum",
+        room_revenue: "sum",
+        f_b_revenue: "sum",
+        tax_for_future: "sum",
+        ADR: "sum",
+
+    };
+
+    const totalValues = rowData.reduce(
+        (total, current) => {
+            total.No_of_Nights += current.No_of_Nights;
+            total.room_revenue += current.room_revenue;
+            total.f_b_revenue += current.f_b_revenue;
+            total.tax_for_future += current.tax_for_future;
+            // total.ADR += 0;
+            total.ADR += (current.room_revenue / current.No_of_Nights) || 0;
+
+            return total;
+        },
+        {
+            No_of_Nights: 0,
+            room_revenue: 0,
+            f_b_revenue: 0,
+            tax_for_future: 0,
+            ADR: 0,
+        }
+    );
+
+    totalRow.No_of_Nights = totalValues.No_of_Nights;
+    totalRow.room_revenue = totalValues.room_revenue;
+    totalRow.f_b_revenue = totalValues.f_b_revenue;
+    totalRow.tax_for_future = totalValues.tax_for_future;
+    // totalRow.ADR = totalValues.ADR;
+    totalRow.ADR = (totalValues.room_revenue / totalValues.No_of_Nights) || 0;
+
+
+    const updatedRowData = [...rowData, totalRow];
+
+
+
+
+
+    // ** Hooks
+    let navigate = useNavigate();
+
+    const handleChange = (selectedOption) => {
+        const selectedIds = selectedOption.map(option => option.value);
+        const selectedIdsString = JSON.stringify(selectedIds); // Convert to a JSON string
+        console.log(selectedIdsString);
+        console.log(selectedIds.length);
+        if (selectedIds.length === 0) {
+            setCompanyData(null);
+            setCompanyNames("All")
+        } else {
+            setCompanyData(selectedIds);
+            setCompanyNames(selectedOption.map(option => option.label))
+            setfilterMarket(selectedOption.map(option => option.label))
+
+        }
+    };
+
+
+    const onButtonExport = () => {
+
+        const params = {
+            fileName: 'Profile Productivity Business Agent.xlsx',
+            sheetName: 'Sheet1',
+        };
+
+        gridRef.current.api.exportDataAsExcel(params);
+    };
+
+
+
+    useEffect(() => {
+        fetchx(DASHBOARD_URL + "/getGuestProfileAgentID?hotelID=10")
+            .then((result) => result.json())
+            .then((resp) => {
+                setCompanyID(resp["data"]);
+            });
+
+    }, [])
+
+
+    function formatNumber(params) {
+        var number = params.value;
+
+        // Check if the number is undefined or not a number
+        if (typeof number !== 'number' || isNaN(number)) {
+            return ''; // Return empty string for undefined or non-numeric values
+        }
+
+        // If the number is valid, proceed with formatting
+        var formattedNumber = Math.floor(number).toFixed(2); // Limit to 2 decimal places
+        return formattedNumber.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    }
+
+
+
+
+
+    const downloadPDF = () => {
+        const gridApi = gridRef.current && gridRef.current.api;
+        const uniqueDepartureDates = Array.from(new Set(updatedRowData.map((row) => row.accountName)));
+        const accountNameTotalNights = {};
+
+        updatedRowData.forEach(row => {
+            const accountName = row.accountName;
+            const nights = parseFloat(row.No_of_Nights || 0);
+            // Skip the "Grand Total" accountName
+            if (accountName !== "Grand Total") {
+                accountNameTotalNights[accountName] = (accountNameTotalNights[accountName] || 0) + nights;
+            }
+        });
+
+        // Sort uniqueDepartureDates based on maximum total nights for each accountName
+        uniqueDepartureDates.sort((a, b) => accountNameTotalNights[b] - accountNameTotalNights[a]);
+
+        if (gridApi) {
+            const rowData = gridApi.getDataAsCsv({
+                skipHeader: false,
+                skipFooters: false,
+                skipGroups: false,
+            });
+            const headerRow = rowData.substring(0, rowData.indexOf("\n"));
+            const cleanHeaderRow = headerRow.replace(/"/g, "");
+            const dataRows = rowData.substring(rowData.indexOf("\n") + 1);
+            const cleanData = dataRows.replace(/"/g, "");
+            const rows = cleanData.split("\n").map((row) => row.split(","));
+            const pdf = new jsPDF({ orientation: "landscape" });
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const logoWidth = 15;
+            const xCenter = (pageWidth - logoWidth) / 2;
+            const logoHeight = 15;
+
+            pdf.addImage(Logo, "JPEG", xCenter, 10, logoWidth, logoHeight);
+            pdf.setFontSize(12);
+            pdf.setFont("helvetica", "bold");
+            // pdf.text("THE OTERRA BENGALURU", 120, 33);
+            const hotelName = hotelDetails[0].name.toUpperCase(); // Convert to uppercase
+            const hotelCity = hotelDetails[0].city.toUpperCase(); // Convert to uppercase
+            const hotelAddress = hotelDetails[0].address.toUpperCase(); // Convert to uppercase
+
+            pdf.text(`${hotelName}`, 120, 33);
+            pdf.text(`${hotelCity}`, 150, 33);
+            pdf.text(`${hotelAddress}`, 80, 39);
+
+            pdf.text("Profile Productivity Agent", 125, 44);
+
+            let dateY = 10;
+            const margin = { left: 10, right: 10 };
+            const currentDate = new Date();
+            const formattedDate = formatDates(currentDate);
+            const paddingFromRight = 100;
+            const dateX = pageWidth - pdf.getStringUnitWidth(formattedDate) - paddingFromRight;
+            // pdf.text("Report Generated Time " + formattedDate, dateX, dateY);
+            const formattedDateTime = formatDateTimeWithAMPM(currentDate);
+
+            pdf.text(`Report Generated Time: ${formattedDateTime}`, 230, 10, { width: 500, align: 'center' });
+            const pageCenter = pdf.internal.pageSize.width / 2;
+
+            function formatDate(date) {
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}.${month}.${year}`;
+            }
+
+
+            function formatDates(date) {
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+
+                return `${day}.${month}.${year}`;
+            }
+
+
+
+            uniqueDepartureDates
+                .sort((a, b) => new Date(a) - new Date(b))
+                .forEach((accountName, index) => {
+                    const agentInfo = updatedRowData.find(row => row.accountName === accountName);
+                    const agentAddress = agentInfo.address;
+                    console.log(agentAddress)
+                    const rowsForDate = updatedRowData
+
+                        .filter((row) => row.accountName === accountName)
+
+                        .map((row) => {
+                            console.log(row)
+
+                            // const formattedArrival = formatDate(new Date(row.date));
+                            // let formattedArrival;
+                            // if (selectedOption === 'Date') {
+                            //     formattedArrival = Moment(new Date(row.date)).format("DD.MM.YYYY")
+                            // } else {
+                            //     formattedArrival = Moment(new Date(row.date)).format("MMM-YYYY")
+
+                            // }
+
+                            const formatNights = parseFloat(row.No_of_Nights || 0).toLocaleString("en-IN")
+                            const formatRoomRevenue = parseFloat(row.room_revenue || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                            const formatPackageRevenue = parseFloat(row.package_revenue || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                            const formatFnBRevenue = parseFloat(row.f_b_revenue || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                            const formatTax = parseFloat(row.tax_for_future || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                            const formatARR = parseFloat(row.ADR || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                            const formatTotalRevenue = parseFloat(row.revenue || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+                            // console.log(row.date, formattedArrival)
+                            return {
+                                ...row,
+                                // date: formattedArrival,
+                                No_of_Nights: formatNights,
+                                room_revenue: formatRoomRevenue,
+                                package_revenue: formatPackageRevenue,
+
+                                f_b_revenue: formatFnBRevenue,
+                                tax_for_future: formatTax,
+                                ADR: formatARR,
+                                revenue: formatTotalRevenue
+
+                            };
+                        })
+                        // .filter(column => column.field !== 'address')
+                        // .map((row) => columnDefs.map((column) => (row[column.field])));
+                        .map((row) => columnDefs
+                            .filter((column) => column.field !== 'address')
+                            .map((column) => row[column.field])
+                        );
+                    const columns = columnDefs
+                        .filter(column => column.field !== 'address')
+                        .map((column) => column.headerName);
+
+                    // const tableHeight = 8;
+                    let currentPage = 1; // Track the current page number
+                    const tableHeight = 8 + rowsForDate.length * 6; // Assuming 6 units per row
+
+                    // Check if the content fits on the current page
+                    // if (dateY + tableHeight > pdf.internal.pageSize.height - 20) {
+                    //     // Move to the next page if the content exceeds the page height
+                    //     pdf.addPage();
+                    //     dateY = 10; // Reset the Y position for the new page
+                    //     currentPage++; // Increment the current page number
+                    // }
+
+                    const totalCount = rowsForDate.length;
+                    // Calculate totals (using Indian formatted numbers)
+                    const totalNights = rowsForDate.reduce((acc, row) => {
+                        const formattedValue = row[3].replace(/[^0-9.-]+/g, ''); // Remove non-numeric characters, keep the decimal point
+                        return acc + parseFloat(formattedValue || 0);
+                    }, 0);
+
+                    const totalRoomRevenue = rowsForDate.reduce((acc, row) => {
+                        const formattedValue = row[4].replace(/[^0-9.-]+/g, ''); // Remove non-numeric characters, keep the decimal point
+                        return acc + parseFloat(formattedValue || 0);
+                    }, 0);
+                    const totalPackageRevenue = rowsForDate.reduce((acc, row) => {
+                        const formattedValue = row[5].replace(/[^0-9.-]+/g, ''); // Remove non-numeric characters, keep the decimal point
+                        return acc + parseFloat(formattedValue || 0);
+                    }, 0);
+                    const totalFnBRevenue = rowsForDate.reduce((acc, row) => {
+                        const formattedValue = row[6].replace(/[^0-9.-]+/g, ''); // Remove non-numeric characters, keep the decimal point
+                        return acc + parseFloat(formattedValue || 0);
+                    }, 0);
+
+                    const totalTax = rowsForDate.reduce((acc, row) => {
+                        const formattedValue = row[8].replace(/[^0-9.-]+/g, ''); // Remove non-numeric characters, keep the decimal point
+                        return acc + parseFloat(formattedValue || 0);
+                    }, 0);
+                    const totalTotalRevenue = rowsForDate.reduce((acc, row) => {
+                        const formattedValue = row[9].replace(/[^0-9.-]+/g, ''); // Remove non-numeric characters, keep the decimal point
+                        return acc + parseFloat(formattedValue || 0);
+                    }, 0);
+
+                    // const totalARR = rowsForDate.reduce((acc, row) => {
+                    //     console.log(row)
+                    //   const formattedValue = row[9].replace(/[^0-9.-]+/g, ''); // Remove non-numeric characters, keep the decimal point
+                    //   return acc + parseFloat(formattedValue || 0);
+                    // }, 0);
+
+                    // const totalARR = rowsForDate.slice(0, -1).reduce((acc, row) => {
+                    //     const valueAtIndex9 = row[7];
+
+                    //     if (valueAtIndex9 !== undefined && valueAtIndex9 !== null) {
+                    //         const formattedValue = valueAtIndex9.replace(/[^0-9.-]+/g, ''); // Remove non-numeric characters, keep the decimal point
+                    //         return acc + parseFloat(formattedValue || 0);
+                    //     } else {
+                    //         return acc; // Skip undefined or null values
+                    //     }
+                    // }, 0);
+                    const totalARR = rowsForDate.reduce((acc, row) => {
+                        const formattedValue = row[6].replace(/[^0-9.-]+/g, '');; // Remove non-numeric characters, keep the decimal point
+                        return acc + parseFloat(formattedValue || 0);
+                    }, 0);
+
+                    let totalArr;
+                    if (totalNights == 0) {
+                        totalArr = totalRoomRevenue
+                    }
+
+                    else {
+                        totalArr = parseFloat(parseFloat(totalRoomRevenue) / parseFloat(totalNights))
+                    }
+
+
+
+
+                    // Format totals (keeping the Indian formatted style)
+                    const formattedTotalNights = totalNights.toLocaleString("en-IN");
+                    const formattedTotalRoomRevenue = totalRoomRevenue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const formattedTotalPackageRevenue = totalPackageRevenue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const formattedTotalFnBRevenue = totalFnBRevenue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const formattedTotalTax = totalTax.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const formattedARR = totalArr.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const formattedTotalTotalRevenue = totalTotalRevenue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    if (accountName !== 'Grand Total') {
+
+                        pdf.setFont('times', 'bold');
+
+                        if (dateY + tableHeight > pdf.internal.pageSize.height - 20) {
+                            // pdf.addPage();
+                            // dateY = 10;
+
+                            // Check if there is enough space for "Agent" and "Address" on the new page
+                            const availableSpace = pdf.internal.pageSize.height - dateY;
+                            if (availableSpace < 50) { // Assuming 50 units for "Agent" and "Address"
+                                pdf.addPage();
+                                dateY = 10;
+                            }
+                        }
+
+
+                        pdf.text(`Agent: ${(accountName)} `, 10, dateY + 39, { width: 500, align: 'left' });
+                        pdf.setFont('times', 'normal');
+                        pdf.setFont('times', 'bold');
+                        pdf.setFontSize(8); // Set a smaller font size for the agentAddress part
+                        let addressText = '';
+
+                        if (agentAddress) {
+                            addressText = `Address: ${agentAddress}`;
+                        }
+                        pdf.text(addressText, 280, dateY + 39, { width: 500, align: 'right' });
+                        let agentInfo = `Agent: ${accountName}`;
+                        pdf.setFontSize(12); // Set a larger font size for the agent part
+
+                        if (agentAddress !== null && agentAddress !== undefined && agentAddress !== '') {
+
+                            agentInfo += `, ${agentAddress}`;
+                            pdf.setFontSize(8); // Set a smaller font size for the agentAddress part
+
+                        }
+
+
+
+
+
+
+                        pdf.setFont('bold'); // Set bold font style for the "Agent" part
+
+                        pdf.setFontSize(12); // Set a larger font size for the "Agent" part
+
+
+                        // pdf.setFontSize(12);
+
+                        const columnsToFormat = [4, 5, 6, 7, 8];
+
+                        rows.forEach(row => {
+                            columnsToFormat.forEach(columnIndex => {
+                                const value = row[columnIndex];
+                                if (value !== undefined) {
+                                    row[columnIndex] = Number(value).toFixed(2);
+                                }
+                                if (!isNaN(Number(value))) {
+                                    // Format the number with maximumFractionDigits: 2
+                                    row[columnIndex] = new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2 }).format(Number(value));
+                                }
+                            });
+                        });
+                        pdf.autoTable({
+                            head: [columns],
+                            body: [...rowsForDate, ['', '', 'Total', formattedTotalNights, formattedTotalRoomRevenue, formattedTotalPackageRevenue, formattedARR, formattedTotalFnBRevenue, formattedTotalTax, formattedTotalTotalRevenue]],
+                            startY: dateY + 43,
+                            margin,
+                            didParseCell: (data) => {
+                                if (data.column.index == 3 || data.column.index == 4 || data.column.index == 5 || data.column.index == 6 || data.column.index == 7) {
+                                    data.cell.styles.halign = 'right';
+                                }
+                            }
+
+                        })
+                    }
+
+
+                    // Separate the Grand Total row from uniqueDepartureDates
+                    const grandTotalRow = updatedRowData.find(row => row.accountName === 'Grand Total');
+
+                    // Process uniqueDepartureDates excluding the Grand Total row
+                    uniqueDepartureDates
+                        .filter(accountName => accountName !== 'Grand Total')
+                        .sort((a, b) => new Date(a) - new Date(b))
+                        .forEach((accountName, index) => {
+                            // ... Your existing logic for processing each accountName
+                        });
+
+                    if (accountName === 'Grand Total') {
+
+                        // Add the Grand Total row to the end of the PDF
+                        // const grandTotalRowsForDate = columnDefs.map(column => grandTotalRow[column.field]);
+                        pdf.setFont('times', 'bold');
+
+                        pdf.text(`Grand Total`, 10, dateY + 42, { width: 500, align: 'left' });
+
+                        const grandTotalRowsForDate = columnDefs.map((column, index) => {
+                            const value = grandTotalRow[column.field];
+                            return (index >= 4 && index <= 8 && typeof value === 'number') ? value.toFixed(2) : value;
+                        });
+                        pdf.autoTable({
+                            head: [columnDefs.map(column => column.headerName)],
+                            body: [grandTotalRowsForDate],
+                            startY: dateY + 43,
+                            margin
+                        });
+                    }
+
+                    pdf.setFont('times', 'normal');
+                    dateY = pdf.autoTable.previous.finalY - 25
+                });
+
+
+
+
+
+            dateY = pdf.autoTable.previous.finalY + 20;
+
+            const availableSpace = pdf.internal.pageSize.height - dateY;
+
+            // Check if the available space is enough for the content
+            if (availableSpace < 30) { // Adjust '30' based on your content height
+                pdf.addPage(); // Move to the next page
+                dateY = 10; // Set Y position for the new page
+            }
+
+
+            let fromDate = formatDate(new Date(filterFromDate))
+            let toDate = formatDate(new Date(filterToDate))
+            pdf.setFont('times', 'bold');
+
+            pdf.text(`Filter From Date: ${fromDate}`, 10, dateY + 10, { width: 500, align: 'left' });
+            pdf.text(`to To Date: ${toDate}`, 10, dateY + 20, { width: 500, align: 'left' });
+            pdf.text(`Company: ${companyNames}`, 10, dateY + 30, { width: 500, align: 'left' });
+            for (let i = 1; i <= pdf.internal.getNumberOfPages(); i++) {
+                pdf.setPage(i); // Set the active page
+                pdf.setFontSize(10); // Set font size for page number
+
+                const pageNumber = `Page ${i} of ${pdf.internal.getNumberOfPages()}`;
+                const pageNumberWidth = pdf.getStringUnitWidth(pageNumber) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+
+                // Calculate position for center alignment
+                const xPos = pageCenter - (pageNumberWidth / 2);
+                const yPos = pdf.internal.pageSize.height - 5; // 10 units from the bottom
+
+                pdf.text(pageNumber, xPos, yPos);
+            }
+
+            pdf.save("Profile Productivity Business Agent.pdf");
+        } else {
+        }
+    };
+
+
+
+
+    function formatDateTimeWithAMPM(date) {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+
+        let hours = date.getHours();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = (hours % 12) || 12; // Convert to 12-hour format
+        const formattedHours = hours.toString().padStart(2, '0');
+
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
+
+        return `${day}.${month}.${year} ${formattedHours}:${minutes}:${seconds} ${ampm}`;
+    }
+
+    const currentDate = new Date();
+    const formattedDateTimeWithAMPM = formatDateTimeWithAMPM(currentDate);
+
+
+
+
+    const onSubmit = data => {
+        setOpen(true)
+        setIsButtonClicked(true)
+        const filterFromDate = Moment(data.frmdate[0]).format("YYYY-MM-DD");
+        const filterToDate = Moment(data.todate[0]).format("YYYY-MM-DD");
+        setFilterFromDate(filterFromDate);
+        setFilterToDate(filterToDate);
+        setFlag(true);
+        setData(data);
+        let companies;
+        if (companyData) {
+            companies = companyData
+        }
+        else {
+            if (companyID) {
+                companies = companyID
+                companies = companyID.map(item => item.value);
+
+            }
+        }
+
+        let createmarketGroup = JSON.stringify({
+            "hotelID": 10,
+            "FromDate": Moment(String(new Date(data.frmdate[0]))).format("YYYY-MM-DD"),
+            "ToDate": Moment(String(new Date(data.todate[0]))).format("YYYY-MM-DD"),
+            "Month": selectedOption === 'Date' ? 0 : 1,
+            // "AgentID": companies
+            "AgentID": companyData !== null ? JSON.stringify(companyData) : companyData
+        });
+        console.log(createmarketGroup)
+        if (flag1 && selectedOption) {
+            fetchx(DASHBOARD_URL + "/getAgentProductivity", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: createmarketGroup
+            })
+                .then(data => data.json())
+                .then((res) => {
+                    if (res['statusCode'] == 200) {
+                        setIsButtonClicked(false)
+                        setOpen(false)
+                        console.log(res['data'])
+                        const modifiedData = res["data"].map(item => {
+                            if (selectedOption === 'Date') {
+                                // Modify the date field for 'Date' option
+                                return {
+                                    ...item,
+                                    date: Moment(item.date).format("DD.MM.YYYY")
+                                };
+                            } else {
+                                // Modify the date field for 'Month' option
+                                return {
+                                    ...item,
+                                    date: Moment(item.date).format("MMM-YYYY")
+                                };
+                            }
+                        });
+                        // modifiedData.sort((a, b) => {
+                        //     const format = selectedOption === 'Date' ? "DD.MM.YYYY" : "MMM-YYYY";
+
+                        //     const dateA = new Date(Moment(a.date, format).format());
+                        //     const dateB = new Date(Moment(b.date, format).format());
+                        //     return dateA - dateB;
+                        // });
+
+
+                        console.log(modifiedData)
+                        setrowData(modifiedData);
+                    }
+
+                    // setrowData(res["data"]);
+                })
+                .catch(error => {
+                    setIsButtonClicked(false)
+                    console.error('Error fetching data:', error);
+                });
+        }
+
+
+
+    };
+
+
+
+    const handleReset = () => {
+        reset({
+            frmdate: '',
+            todate: '',
+            // "nationality": ''
+        })
+    }
+
+
+    const generateExcel = () => {
+        if (filterFromDate && filterToDate) {
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('Profile Productivity Business Agent'); // Updated worksheet name
+
+            // Updated column definitions based on your new headers and fields
+            const columns = [
+                { header: 'Date', key: 'date', width: 15 },
+                { header: 'Agent', key: 'accountName', width: 25 },
+                { header: 'Account Type', key: 'accountType', width: 15 },
+                { header: 'Address', key: 'address', width: 25 },
+                { header: 'Nights', key: 'No_of_Nights', width: 10 },
+                { header: 'Room Revenue', key: 'room_revenue', width: 20 },
+                { header: 'Package Revenue', key: 'package_revenue', width: 20 },
+                { header: 'ARR', key: 'ADR', width: 15 },
+                { header: 'F&B Revenue', key: 'f_b_revenue', width: 20 },
+                { header: 'Tax(for future)', key: 'tax_for_future', width: 20 },
+                { header: 'Total Revenue', key: 'revenue', width: 20 },
+            ];
+
+            worksheet.columns = columns;
+
+            worksheet.addRow(['Report Name:', 'Profile Productivity Business Agent']); // Updated report name
+            worksheet.addRow(['Filter From Date:', filterFromDate]);
+            worksheet.addRow(['To Date:', filterToDate]);
+
+            let selectedFilterBusiness = filterMarket && filterMarket.length !== 0
+                ? filterMarket.join(', ')
+                : 'All';
+            worksheet.addRow(['Filter Agent:', selectedFilterBusiness]);
+            worksheet.addRow();
+
+            // Adding headers to the worksheet
+            worksheet.addRow(columns.map(column => column.header)).font = { bold: true };
+
+            // Set the first 5 rows to bold
+            for (let i = 1; i <= 5; i++) {
+                worksheet.getRow(i).font = { bold: true };
+            }
+
+            // Remove the first row (the report name row) if needed
+            worksheet.spliceRows(1, 1);
+
+            // Format data before adding to the worksheet
+            const formattedData = (rowData) => {
+                return rowData.map(item => ({
+                    ...item,
+                    marketCode: item.marketCode?.replace(/\r?\n|\r/g, ''),
+                    description: item.description?.replace(/\r?\n|\r/g, '')
+                }));
+            };
+
+            const sanitizedData = formattedData(rowData);
+
+            // Initialize totals
+            let totalNights = 0;
+            let totalRoomRevenue = 0;
+            let totalPackageRevenue = 0;
+            let totalFnbRevenue = 0;
+            let totalTax = 0;
+            let totalRevenue = 0;
+            let totalArr = 0;
+
+            // Adding rows to the worksheet
+            sanitizedData.forEach((row) => {
+                worksheet.addRow({
+                    date: row.date,
+                    accountName: row.accountName,
+                    accountType: row.accountType,
+                    address: row.address,
+                    No_of_Nights: row.No_of_Nights,
+                    room_revenue: row.room_revenue,
+                    package_revenue: row.package_revenue,
+                    ADR: row.ADR,
+                    f_b_revenue: row.f_b_revenue,
+                    tax_for_future: row.tax_for_future,
+                    revenue: row.revenue,
+                });
+
+                // Calculate totals
+                totalNights += parseFloat(row.No_of_Nights || 0);
+                totalRoomRevenue += parseFloat(row.room_revenue || 0);
+                totalPackageRevenue += parseFloat(row.package_revenue || 0);
+                totalFnbRevenue += parseFloat(row.f_b_revenue || 0);
+                totalTax += parseFloat(row.tax_for_future || 0);
+                totalRevenue += parseFloat(row.revenue || 0);
+                totalArr += parseFloat(row.ADR || 0);
+            });
+
+            // Adding total row
+            worksheet.addRow();
+            worksheet.addRow({
+                date: 'Totals',
+                accountName: '',
+                accountType: '',
+                address: '',
+                No_of_Nights: totalNights,
+                room_revenue: totalRoomRevenue.toFixed(2),
+                package_revenue: totalPackageRevenue.toFixed(2),
+                ADR: totalArr.toFixed(2),
+                f_b_revenue: totalFnbRevenue.toFixed(2),
+                tax_for_future: totalTax.toFixed(2),
+                revenue: totalRevenue.toFixed(2),
+            });
+
+            // Bold font for the total row
+            const totalRow = worksheet.lastRow;
+            totalRow.font = { bold: true };
+
+            // Align columns
+            worksheet.columns.forEach((column, index) => {
+                if ([5, 6, 7, 8, 9, 10, 11].includes(index + 1)) {
+                    column.alignment = { vertical: 'middle', horizontal: 'right' };
+                } else {
+                    column.alignment = { vertical: 'middle', horizontal: 'left' };
+                }
+            });
+
+            const currentDate = new Date();
+            const formattedDate = currentDate.toISOString().slice(0, 10);
+
+            workbook.xlsx.writeBuffer().then((buffer) => {
+                const blob = new Blob([buffer], { type: 'application/octet-stream' });
+                saveAs(blob, `Profile Productivity Business Agent_${formattedDate}.xlsx`); // Updated file name
+            }).catch((error) => {
+                console.error('Error generating Excel file:', error);
+            });
+        }
+    };
+
+
+    return (
+        <div>
+            <div>
+                <Modal isOpen={ShowDummyInvPDF} toggle={() => setShowDummyInvPDF(!ShowDummyInvPDF)} style={{ height: '200px' }} className='modal-dialog-centered modal-lg'>
+                    <ModalHeader className='bg-transparent' toggle={() => setShowDummyInvPDF(!ShowDummyInvPDF)}>PMS Dummy Invoice</ModalHeader>
+
+                    <iframe style={{ height: '85vh' }} src={DummyInvURL}> </iframe>
+                </Modal>
+            </div>
+            {/* <img className='fallback-logo' src={logo} alt='logo' /> */}
+
+
+            <Card>
+                <CardHeader>
+                    <CardTitle tag='h4'>Profile Productivity Business Agent</CardTitle>
+                </CardHeader>
+                <CardBody>
+                    <Form onSubmit={handleSubmit(onSubmit)}>
+                        <Row>
+
+                            <Col md="3" sm="12">
+                                <div className="mb-1">
+                                    <Label className="form-label" for="frmdate">
+                                        From Date
+                                    </Label>
+                                    <Controller
+                                        control={control}
+                                        id="frmdate"
+                                        name="frmdate"
+                                        render={({ field }) => (
+                                            <Flatpickr
+                                                {...field}
+                                                required
+                                                // value={data1['dob']}
+                                                // options={doboptions}
+                                                options={{ allowInput: true }}
+                                                placeholder="YYYY-MM-DD "
+                                                className={classnames("form-control", {
+                                                    // 'is-invalid': data !== null && data.dob === null
+                                                })}
+                                            />
+                                        )}
+                                    />
+                                </div>
+                            </Col>
+
+                            {/* <Col md="3" sm="12">
+                <div className="mb-1">
+                  <Label className="form-label" for="todate">
+                    To Date
+                  </Label>
+                  <Controller
+                    control={control}
+                    id="todate"
+                    name="todate"
+                    render={({ field }) => (
+                      <Flatpickr
+                        {...field}
+                        // value={data1['dob']}
+                        // options={doboptions}
+                        options={optionsToDate}
+
+                        // options={{ allowInput: true }}
+                        placeholder="YYYY-MM-DD "
+                        className={classnames("form-control", {
+                          // 'is-invalid': data !== null && data.dob === null
+                        })}
+                      />
+                    )}
+                  />
+                </div>
+              </Col> */}
+
+                            <Col md="3" sm="12">
+                                <div className="mb-1">
+                                    <Label className="form-label" for="todate">
+                                        To Date
+                                    </Label>
+                                    <Controller
+                                        control={control}
+                                        id="todate"
+                                        name="todate"
+                                        render={({ field }) => (
+                                            <Flatpickr
+                                                {...field}
+                                                required
+                                                options={{ allowInput: true }}
+                                                // value={data1['dob']}
+                                                // options={optionsToDate}
+                                                placeholder="YYYY-MM-DD "
+                                                className={classnames("form-control", {
+                                                    // 'is-invalid': data !== null && data.dob === null
+                                                })}
+                                            />
+                                        )}
+                                    />
+                                </div>
+                            </Col>
+
+                            <Col md="3" sm="12">
+                                <div className="mb-1">
+                                    <Label className="form-label" for="companyID">
+                                        Company Name
+                                    </Label>
+                                    <Controller
+                                        id="companyID"
+                                        control={control}
+                                        name="companyID"
+                                        render={({ field }) => (
+                                            <Select
+                                                isMulti
+                                                // required
+                                                isClearable
+                                                options={companyID}
+                                                classNamePrefix="select"
+                                                theme={selectThemeColors}
+                                                // className={classnames("react-select", {
+                                                // "is-invalid": data !== null && data.companyID === null,
+                                                // })}
+                                                {...field}
+                                                onChange={handleChange}
+
+                                            />
+                                        )}
+                                    />
+                                </div>
+                            </Col>
+                            <Col md='12' sm='12' className='mb-1'>
+                                <Label className='form-check-label' for='ex1-active'>
+                                    <Input type="radio" name='ex1' value="Date" checked={selectedOption === 'Date'} onChange={handleTransferTransaction} />
+                                    Date wise
+                                </Label>
+                            </Col>
+
+
+                            <Col md='12' sm='12' className='mb-1'>
+                                <Label className='form-check-label'>
+                                    <Input type="radio" name='ex1' value="Month" checked={selectedOption === 'Month'} onChange={handleTransferTransaction} />
+                                    Month wise
+                                </Label>
+                            </Col>
+                            <div className='d-flex'>
+                                <Button className='me-1 ms-auto' color='primary' type='submit' onClick={() => setflag1(true)} disabled={isButtonClicked}>
+                                    {/* Submit */}
+                                    {isButtonClicked ? 'Processing...' : 'Submit'}
+                                </Button>
+                                <Button outline className='me-1' color='secondary' type='reset' onClick={handleReset}>
+                                    Reset
+                                </Button>
+
+                                {/* <Button className='me-1 ms-auto' color='primary' type='submit' onClick={onBtnExport}>
+  CSV 
+</Button> */}
+                                {/* <Button className='me-1' color='primary' type='submit' onClick={onButtonExport}>
+                                    Download Excel
+                                </Button> */}
+                                <Button
+                                    className='me-1'
+                                    color='primary'
+                                    onClick={generateExcel}
+                                >
+                                    Download Excel
+                                </Button>
+
+                                <Button className='me-1' color='primary' onClick={() => downloadPDF(data)}>
+                                    Print PDF
+                                </Button>
+
+                                {/* <Button className='me-1' color='primary' type='submit' onClick={() => setflag1(false)}>
+                  Download
+                </Button> */}
+                            </div>
+                        </Row>
+                    </Form>
+                </CardBody>
+            </Card>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={open}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <h1 style={{ fontWeight: 'bold', color: 'white' }}>
+                        Please wait... We're processing your request,
+                    </h1>
+                    <h1 style={{ fontWeight: 'bold', color: 'white' }}>
+                        which may take a little longer due to additional data. Please be patient!
+                    </h1>
+                    <CircularProgress color="inherit" />
+                </div>
+            </Backdrop>
+            {/* onClick={handleDownload} */}
+            {flag == true && <div className="ag-theme-alpine">
+                <AgGridReact
+                    ref={gridRef}
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    animateRows={true} rowSelection='multiple'
+                    onCellClicked={cellClickedListener}
+                    domLayout='autoHeight'
+                    selectedOption={selectedOption}  // Make sure to pass the selectedOption
+
+                    autoGroupColumnDef={autoGroupColumnDef}
+                    groupIncludeFooter={true}
+                    groupIncludeTotalFooter={true}
+                    defaultColDef={defaultColDef}
+                    gridOptions={gridOptions}
+                    headerColor="ddw-primary"
+
+                />
+            </div>}
+            {/* <App/> */}
+        </div>
+
+    )
+    const root = createRoot(document.getElementById('root'));
+    root.render(
+        <StrictMode>
+            <ProductivityBusinessAent />
+        </StrictMode>
+    );
+
+
+}
+
+
+
+export default ProductivityBusinessAent
+

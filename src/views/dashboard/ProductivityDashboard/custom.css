@@ -1,0 +1,36 @@
+.custom-header {
+    background-color: #DA9800; /* Change to your desired color */
+    color: #ffffff; /* Change to your desired text color */
+}
+
+.ag-header-group-text {
+    font-size: 20px; /* Adjust the font size as needed */
+  }
+
+  .main-header {
+    background-color: #DA9800; /* Change to your desired color for main header */
+    color: #ffffff; /* Change to your desired text color for main header */
+  }
+  
+  .additional-header {
+    background-color: #147331; /* Change to your desired color for additional header */
+    color: #ffffff; /* Change to your desired text color for additional header */
+  }
+
+  .vertical-line {
+    border-right: 1px solid #ffffff /* Adjust the color and style as needed */
+}
+
+/* Add vertical line for all cells */
+.ag-cell {
+  border-right: 1px solid #ccc; /* Adjust the color and style as needed */
+}
+
+/* Remove vertical line for the last cell in each row */
+.ag-cell-last {
+  border-right: none;
+}
+
+.vertical-line-cell {
+  border-right: 1px solid #ccc; /* Adjust styling as needed */
+}

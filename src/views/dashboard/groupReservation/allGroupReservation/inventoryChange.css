@@ -1,0 +1,15 @@
+
+
+/* Custom styles for this specific AG Grid instance */
+.ag-theme-alpine.custom-rollover-theme .ag-header {
+    --ag-header-column-separator-display: block;
+    --ag-header-column-separator-height: 100%;
+    --ag-header-column-separator-width: 2px;
+    --ag-header-column-separator-color: #cdcdcd;
+
+    --ag-header-column-resize-handle-display: block;
+    --ag-header-column-resize-handle-height: 50%; 
+    --ag-header-column-resize-handle-width: 5px;
+    --ag-header-column-resize-handle-color: orange;
+}
+

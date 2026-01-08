@@ -1,0 +1,18 @@
+/* Example custom CSS to style the gauge chart */
+.gauge-chart-container {
+    width: 600px; /* Adjust width as needed */
+    height: 100%; /* Adjust height as needed */
+    position: relative;
+  }
+  
+.overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+
+
+

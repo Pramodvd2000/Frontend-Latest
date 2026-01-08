@@ -1,0 +1,14 @@
+.fc-event {
+    border-radius: 10px;
+    padding: 5px;
+    font-size: 12px;
+  }
+  
+  .fc-resource-timeline .fc-col-header {
+    background: #f5f5f5;
+  }
+  
+  .fc-daygrid-day {
+    background-color: #fafafa;
+  }
+  

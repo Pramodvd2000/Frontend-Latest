@@ -1,0 +1,54 @@
+.float {
+    float: left;
+    display: flex;
+    flex-wrap: wrap;
+    font-family: 'Montserrat', 'Helvetica', 'Arial', 'serif';
+    font-weight: 400;
+    font-size: 15px;
+    
+}
+
+.name{
+    // display: flex;
+      flex-wrap: wrap;
+      font-family: 'Montserrat', 'Helvetica', 'Arial', 'serif';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 13px; 
+      width: 199.6px;
+      padding-bottom: 10px;
+  }
+  
+  .label{
+    display: flex;
+      flex-wrap: wrap;
+      font-family: 'Montserrat', 'Helvetica', 'Arial', 'serif';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 13px;  
+  }
+
+// .button {
+//     flex-wrap: wrap;
+//     font-family: 'Montserrat', 'Helvetica', 'Arial', 'serif';
+//     font-style: normal;
+//     font-weight: 400;
+//     font-size: 13px;
+//     // width: 115px;
+//     // height: 30px;
+//     // left: 50%;
+//     // padding-right: 100px;  
+//     // padding-left: 250px;
+// }
+
+.font {
+    font-family: 'Montserrat', 'Helvetica', 'Arial', 'serif';
+    color: #6e6b7b;
+    font-style: normal;
+    // display: flex;    
+    padding-bottom: 10px;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 22px;
+    align-items: center;
+}
