@@ -257,9 +257,29 @@ const InventoryLedger = lazy(() => import("../../views/dashboard/inventoryLedger
 const GuestDetails = lazy(() => import('../../views/apps//guestProfile'))
 const DashboardAutoNigthAudit = lazy(() =>  import("../../views/dashboard/autoNightAudit"));
 const DashboardNigthAuditLogs = lazy(() =>  import("../../views/dashboard/nightAuditLogs"));
+const RoomTypeWiseDetails = lazy(() =>  import("../../views/dashboard/BookingEngineConfig/roomTypeWiseDetails"));
+const RoomAmeneties = lazy(() =>  import("../../views/dashboard/BookingEngineConfig/roomAmeneties"));
+const RoomDetails = lazy(() =>  import("../../views/dashboard/BookingEngineConfig/roomDetails"));
+const RoomTypeImages = lazy(() =>  import("../../views/dashboard/BookingEngineConfig/roomTypeImages"));
 
 const DashboardRoutes = [
   {
+    path: '/dashboard/BookingEngineConfig/roomTypeWiseDetails',
+    element: <RoomTypeWiseDetails />
+  },
+   {
+    path: '/dashboard/BookingEngineConfig/roomTypeImages',
+    element: <RoomTypeImages />
+  },
+  {
+    path: '/dashboard/BookingEngineConfig/roomAmeneties',
+    element: <RoomAmeneties />
+  },
+  {
+    path: '/dashboard/BookingEngineConfig/roomDetails',
+    element: <RoomDetails />
+  },
+   {
     path: '/dashboard/groupreservation/createenquiry',
     element: <GroupReservation />
   },

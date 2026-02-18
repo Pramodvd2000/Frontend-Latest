@@ -1008,11 +1008,12 @@ import { useRef, useEffect, useMemo, useCallback } from 'react';
 // ** Third Party Components
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+const MySwal = withReactContent(Swal)
+
 import StopSell from './stopSell'
 import StopSellLogs from './stopSellLogs'
 import InventoryLogs from "../sellControlRooms/inventoryLogs";
 
-const MySwal = withReactContent(Swal)
 const id = '1'
 const date = '2023-02-02'
 const roomID = '30'

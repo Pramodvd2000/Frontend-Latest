@@ -421,6 +421,40 @@ export default [
     ]
   },
 
+  
+  {
+    id: 'BookingEngineConfig',
+    title: 'Booking Engine Config',
+    icon: <CreditCard size={12} />,
+    children: [
+      {
+        id: 'Room Type Wise Details',
+        title: 'Room Type Wise Details',
+        icon: <Circle size={12} />,
+        navLink: '/dashboard/BookingEngineConfig/roomTypeWiseDetails'
+      },
+      {
+        id: 'Room Ameneties',
+        title: 'Room Ameneties',
+        icon: <Circle size={12} />,
+        navLink: '/dashboard/BookingEngineConfig/roomAmeneties'
+      },
+
+      {
+        id: 'Room Details',
+        title: 'Room Details',
+        icon: <Circle size={12} />,
+        navLink: '/dashboard/BookingEngineConfig/roomDetails'
+      },
+      {
+        id: 'Room Type Images',
+        title: 'Room Type Images',
+        icon: <Circle size={12} />,
+        navLink: '/dashboard/BookingEngineConfig/roomTypeImages'
+      },
+    ]
+  },
+
   // Forex tab
   {
     id: 'Forex',
