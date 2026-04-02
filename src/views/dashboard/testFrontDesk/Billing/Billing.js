@@ -94,6 +94,7 @@ const Companydetails = ({Today}) => {
   const [cancelReservation, setCancelReservation] = useState(false)
   const [filldata, setfilldata] = useState("");
   const [sharerDetails, setSharerDetails] = useState()
+  const [isCheckOutClicked, setIsCheckOutClicked] = useState(false)
 
   const fetchReservationAlerts = async () => {
     try {
@@ -224,8 +225,8 @@ const Companydetails = ({Today}) => {
 
   
   const CheckOut = () => {
-
-
+console.log("CheckOut clicked")
+setIsCheckOutClicked(true)
 
     fetchx(API_URL + "/checkOutReservation", {
       method: "POST",
@@ -252,8 +253,9 @@ const Companydetails = ({Today}) => {
           );
 
           { setTimeout(() => { navigate('/dashboard/frontdesk/Billing') }, 1000) } // Replace '/new-page' with the actual URL you want to open in the new tab
-
+setIsCheckOutClicked(false)
         } else {
+          setIsCheckOutClicked(false)
           seterrorMsg(resp.message)
           setshowErrorMsg(!showErrorMsg)
         }
@@ -271,6 +273,7 @@ const Companydetails = ({Today}) => {
 
   const ConfirmCheckoutGuest = () => {
     setEnableButton(true)
+    // setIsCheckOutClicked(true)
     if (ReservationData['isMain'] == 1) {
       fetchx(API_URL + `/checkIfSharerExists?hotelID=1&sharingID=` + ReservationData['sharingID'])
 
@@ -572,17 +575,18 @@ const Companydetails = ({Today}) => {
                     </Col>
                     <Col md='6' sm='6'>
                       <div className='inline-spacing' align="right" style={{ margin: '5px 0' }}>
-                        <Button color='primary' style={{ 'margin-right': '10px' }} className='sharer' disabled={EnableButton || !(ReservationData['reservationStatus'] == 'Checked In' || ReservationData['reservationStatus'] == 'Due Out')} onClick={() => {
-                          if (ReservationData['departureDate'] != moment(String(new Date(Today))).format('YYYY-MM-DD')) {
-                            seterrorMsg('Departue date is not today')
-                            setshowErrorMsg(true)
-                          } else if (FoliosToSettle.length > 0) {
-                            seterrorMsg('All Folios are not settled')
-                            setshowErrorMsg(true)
-                          } else if (ReservationData['departureDate'] == moment(String(new Date(Today))).format('YYYY-MM-DD')) {
+                        <Button color='primary' style={{ 'margin-right': '10px' }} className='sharer' disabled={EnableButton || !(ReservationData['reservationStatus'] == 'Checked In' || ReservationData['reservationStatus'] == 'Due Out') } onClick={() => {
+                          // if (ReservationData['departureDate'] != moment(String(new Date(Today))).format('YYYY-MM-DD')) {
+                          //   seterrorMsg('Departue date is not today')
+                          //   setshowErrorMsg(true)
+                          // } else if (FoliosToSettle.length > 0) {
+                          //   seterrorMsg('All Folios are not settled')
+                          //   setshowErrorMsg(true)
+                          // } else if (ReservationData['departureDate'] == moment(String(new Date(Today))).format('YYYY-MM-DD')) {
                             ConfirmCheckoutGuest()
-                          }
-                        }} >Check Out</Button>
+                          // }
+                        }}  
+                        >Check Out</Button>
                       </div>
                     </Col>
                   </Row>
@@ -835,8 +839,9 @@ const Companydetails = ({Today}) => {
 
           <Row>
             <Col className='text-center mt-1' xs={12}>
-              <Button type='submit' className='me-1' color='primary' onClick={CheckOut}>
-                Confirm
+            {console.log("isCheckOutClicked",isCheckOutClicked)}
+              <Button type='submit' className='me-1' color='primary' onClick={CheckOut} disabled={isCheckOutClicked}>
+                Confirms
               </Button>
               <Button
                 color='secondary'

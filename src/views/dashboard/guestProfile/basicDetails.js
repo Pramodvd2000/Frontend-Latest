@@ -397,7 +397,7 @@ if(flag==true){
                   />
                 </div>
               </Col>
-              <Col md='3' sm='12'>
+              {/* <Col md='3' sm='12'>
                 <div className='mb-1'>
                   <Label className='form-label' for='phoneNumber'>
                     Phone Number
@@ -421,7 +421,29 @@ if(flag==true){
                     />
                   </InputGroup>
                 </div>
-              </Col>
+              </Col> */}
+               <Col md="3" sm="12">
+  <div className="mb-1">
+    <Label className="form-label" for="phonenumber">
+      Phone Number
+    </Label>
+
+    <Controller
+      name="phonenumber"
+      control={control}
+      render={({ field }) => (
+        <PhoneInput
+          country={"in"}   // default country
+          enableSearch={true}
+          value={field.value}
+          onChange={(phone) => field.onChange(phone)}
+          inputClass="form-control"
+          containerClass="w-100"
+        />
+      )}
+    />
+  </div>
+</Col>
               <Col md='3' sm='12'>
                 <div className="mb-1">
                   <Label className="form-label" for="vipID">

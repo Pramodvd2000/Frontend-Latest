@@ -135,7 +135,7 @@ const AvailabilityMatrix = () => {
           }else if(resp.message==='Document does not exists'){
             // call getinvoicejson api to regenerate
               console.log('Regenrating Inv')
-              fetchx(API_URL +`/getInvoiceJSON?hotelID=10&reservationID=${reservationID}&folioNo=${folioNo}`)
+              fetchx(API_URL +`/getInvoiceJSON?hotelID=10&reservationID=${reservationID}&folioNo=${billNo}`)
               .then(result => result.json())
               .then(rowData => {
                 console.log(rowData)

@@ -127,9 +127,11 @@ const PillFilled = () => {
     // const [active, setActive] = useState('1')
     const [startNightAudit, setStartNightAudit] = useState(false)
     const [modalOpen, setModalOpen] = useState(false);
+    const [autoModalOpen, setAutoModalOpen] = useState(false);
     const [showCard, setShowCard] = useState(false);
 
     const [Today, setToday] = useState()
+    const [hotelDetails, setHotelDetails] = useState()
 
     const [open, setOpen] = useState(false);
     const [showSecondaryMessage, setShowSecondaryMessage] = useState(false);
@@ -148,6 +150,8 @@ const PillFilled = () => {
                 const tomorrow = new Date(today);
                 tomorrow.setDate(today.getDate() + 1);
                 setToday((Moment(String(new Date(postres['data'][0]['businessDate']))).format('YYYY-MM-DD')))
+                setHotelDetails(postres['data'])
+                
             })
     }, []);
 
@@ -950,6 +954,19 @@ const PillFilled = () => {
     }
 
 
+        function AutomateNightAudit() {
+      
+        fetchx(API_URL + "/autoNightAuditFinal", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: getDailyDetails
+        }).then(result => result.json())
+            .then(rowData => {
+                console.log(rowData)
+                handleSuccess("Automated Night Audit Started !!")
+            })
+    }
+
     // 2) For pending arrivals
 
     const [pendingArr, setPendingArr] = useState();
@@ -1418,30 +1435,30 @@ const PillFilled = () => {
                     }, 5000);
                     const canProceed = await CheckPendingSteps('roomStatusCheck');
                     clearTimeout(timeout); // good to clear the timer
-    
+
                     if (!canProceed) {
                         setOpen(false);
                         return false;
                     }
-    
+
                     // setOpen(false);
                     return true;
                 };
-    
+
                 const canProceed = await runFixedChargeCheck();
                 if (!canProceed) return;
-    
+
                 const getDailyDetails = JSON.stringify({
                     hotelID: 1,
                     CheckUpdate: 0,
                 });
-    
+
                 const response = await fetchx(API_URL + "/updateRoomStatusInNightAudit", {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: getDailyDetails
                 }).then(result => result.json());
-    
+
                 console.log(response);
                 setRoomStatus(response.data);
                 setOpen(false);
@@ -1449,21 +1466,21 @@ const PillFilled = () => {
                 const hasAnyNonNullValue = response.data.some(room =>
                     room.NewReservationStatus !== null || room.NewRoomStatus !== null
                 );
-    
+
                 console.log(hasAnyNonNullValue);
                 setRoomStatusLength(hasAnyNonNullValue);
-    
+
                 if (!hasAnyNonNullValue) {
                     const columnsToUpdate = JSON.stringify({
                         roomStatusCheck: 1
                     });
-    
+
                     const updateResponse = await fetchx(API_URL + "/updateNightAudit?date=" + Today, {
                         method: "PUT",
                         headers: { 'Content-Type': 'application/json' },
                         body: columnsToUpdate
                     }).then(result => result.json());
-    
+
                     console.log(updateResponse);
                     if (updateResponse.statusCode === 200) {
                         // setDisableRoomStatus(true)
@@ -1474,7 +1491,7 @@ const PillFilled = () => {
             })();
         }
     }, [active === '7' && Today]);
-    
+
 
     // Room Status Final Submit 
     function RoomStatusSubmit() {
@@ -1782,49 +1799,49 @@ const PillFilled = () => {
 
 
     useEffect(() => {
-  if (active === '5') {
-    (async () => {
-      const runFixedChargeCheck = async () => {
-        setOpen(true);
-        const timeout = setTimeout(() => {
-          setShowSecondaryMessage(true);
-        }, 5000);
-        const canProceed = await CheckPendingSteps('postingRoomAndTax');
-        console.log(canProceed);
+        if (active === '5') {
+            (async () => {
+                const runFixedChargeCheck = async () => {
+                    setOpen(true);
+                    const timeout = setTimeout(() => {
+                        setShowSecondaryMessage(true);
+                    }, 5000);
+                    const canProceed = await CheckPendingSteps('postingRoomAndTax');
+                    console.log(canProceed);
 
-        if (!canProceed) {
-          setConfirmRoomPosting(false);
-          setConfirmRoomPostingLastStep(false);
-          setOpen(false);
-          return false;
+                    if (!canProceed) {
+                        setConfirmRoomPosting(false);
+                        setConfirmRoomPostingLastStep(false);
+                        setOpen(false);
+                        return false;
+                    }
+                    return true;
+                };
+
+                const canContinue = await runFixedChargeCheck();
+
+                if (!canContinue) return;
+
+                let unAssign = JSON.stringify({ hotelID: 1 });
+                let res = await fetchx(API_URL + "/getRoomPostings", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: unAssign,
+                })
+                    .then(result => result.json())
+                    .then(rowData => {
+                        condition = true;
+                        if (rowData['statusCode'] === 200) {
+                            setRoomPosting(rowData['data']);
+                            setOpen(false);
+                        } else if (rowData['statusCode'] === 403) {
+                            RefreshGetNightAuditFunction();
+                            handleError(rowData['message']);
+                        }
+                    });
+            })();
         }
-        return true;
-      };
-
-      const canContinue = await runFixedChargeCheck();
-
-      if (!canContinue) return;
-
-      let unAssign = JSON.stringify({ hotelID: 1 });
-      let res = await fetchx(API_URL + "/getRoomPostings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: unAssign,
-      })
-        .then(result => result.json())
-        .then(rowData => {
-          condition = true;
-          if (rowData['statusCode'] === 200) {
-            setRoomPosting(rowData['data']);
-            setOpen(false);
-          } else if (rowData['statusCode'] === 403) {
-            RefreshGetNightAuditFunction();
-            handleError(rowData['message']);
-          }
-        });
-    })();
-  }
-}, [active === '5']);
+    }, [active === '5']);
 
 
 
@@ -2180,7 +2197,7 @@ const PillFilled = () => {
                         setShowSecondaryMessage(true);
                     }, 5000);
                     const canProceed = await CheckPendingSteps('fixedChargePostingCheck');
-    
+
                     if (!canProceed) {
                         setConfirmFixedChargePosting(false);
                         setOpen(false);
@@ -2188,35 +2205,35 @@ const PillFilled = () => {
                     }
                     return true;
                 };
-    
+
                 const canProceed = await runFixedChargeCheck();
                 if (!canProceed) return;
-    
+
                 const response = await fetchx(`${API_URL}/getFixedChargesForDay?hotelID=1&date=${Today}`)
                     .then(result => result.json());
-    
+
                 console.log(response);
                 if (response.statusCode === 200) {
                     setOpen(false);
                     setFixedCharge(response.data);
-    
+
                     if (response.data.length === 0) {
                         // Perform logic for empty data (optional)
                     }
-    
+
                     const columnsToUpdate = JSON.stringify({
                         date: Today,
                         hotelID: 1
                     });
-    
+
                     const auditData = await fetchx(`${API_URL}/getNightAuditCheck`, {
                         method: "POST",
                         headers: { 'Content-Type': 'application/json' },
                         body: columnsToUpdate
                     }).then(result => result.json());
-    
+
                     setNightAuditData(auditData.data[0]);
-    
+
                     if (auditData.data[0].fixedChargePostingCheck === '1') {
                         // optionally perform logic based on fixedChargePostingCheck
                     }
@@ -2225,7 +2242,7 @@ const PillFilled = () => {
         }
     }, [active === '6' && Today]);
 
-    
+
     // console.log(active)
 
     // Fixed Charge Final Submit 
@@ -2893,7 +2910,14 @@ const PillFilled = () => {
                                 <Button color="primary" onClick={() => setModalOpen(true)}>
                                     Start
                                 </Button>{' '}
+
                             </div>
+                            <br></br>
+                           {hotelDetails && hotelDetails[0].id === 14 && <div>
+                                <Button color="primary" onClick={() => setAutoModalOpen(true)}>
+                                    Auto Start
+                                </Button>{' '}
+                            </div>}
                         </CardBody>
                     </Card>
                     <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)} centered>
@@ -2913,9 +2937,28 @@ const PillFilled = () => {
                             </Button>
                         </ModalFooter>
                     </Modal>
+
                 </div>
             }
 
+
+            <Modal isOpen={autoModalOpen} toggle={() => setAutoModalOpen(!autoModalOpen)} centered>
+                <ModalHeader toggle={() => setAutoModalOpen(!autoModalOpen)} className="text-center">
+                    Night Audit Confirmation
+                </ModalHeader>
+                <ModalBody className="text-center">
+                    <h4> <b> Confirm to Auto Night Audit</b></h4>
+                </ModalBody>
+                <ModalFooter className="justify-content-center">
+                    {/* <Button color="primary" onClick={() => (setStartNightAudit(true), setActive('1'), AddToNightAudit())}> */}
+                    <Button color="primary" onClick={() => (AutomateNightAudit())}>
+                        Confirm
+                    </Button>
+                    <Button color="secondary" onClick={() => setAutoModalOpen(!autoModalOpen)}>
+                        Cancel
+                    </Button>
+                </ModalFooter>
+            </Modal>
 
             {/* </div
 

@@ -42,7 +42,7 @@ import GuestPreferences from "./prefrence";
 import PastStays from "./futurepaststay";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-
+import AutoAssign from '../autoAssignRooms';
 const MySwal = withReactContent(Swal)
 let is_test = false
 
@@ -88,6 +88,7 @@ function Today() {
   const [ShowInvPDF, setShowInvPDF] = useState(false)
   const [futureStays, setfutureStays] = useState();
   const [preferenceData, setpreferenceData] = useState();
+  const [autoAssign, setAutoAssign] = useState(false);
 
 
   // function handleAlert(message) {
@@ -694,10 +695,41 @@ function Today() {
       })
   }
 
+
+
+    function refreshData (){
+        fetchx(API_URL + "/getReservationGuestDetails", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          hotelID: '1',
+          reservationID: filldata['id'],
+        })
+      })
+        .then(result => result.json())
+        .then(rowData => {
+          //console.log(rowData['data']);
+          setDetails(rowData['data'][0]);
+          //console.log(rowData['data'][0]['guestID']);
+  
+          fetchx(API_URL + `/getResPaymentInformations?hotelID=1&reservationID=${event['data']['tempReservationID']}`)
+            .then((result) => result.json())
+            .then((rowData) => {
+              setPytDetails(rowData["data"][0]);
+              //console.log(rowData["data"]);
+            })
+            .catch((error) => {
+              //console.log(error);
+            });
+        })
+    }
+    
   return (
     <div>
       {/* <button onClick={buttonListener}>Push Me</button> */}
       <div>
+        
+<Row className="align-items-end">
         <Col md='3' sm='12' className='mb-1'>
           <Label className='form-label' for='fullName'>
             Search
@@ -709,6 +741,12 @@ function Today() {
             onInput={onFilterTextBoxChanged}
           />
         </Col>
+
+        <Col  className='mb-1 d-flex justify-content-end'>
+        <Button color='primary' onClick={() => setAutoAssign(true)} style={{marginTop:'24px'}}>Auto Assign Room</Button>
+
+</Col>
+</Row>
       </div>
       <div className="ag-theme-alpine" style={{ height: 520 }}>
         <AgGridReact
@@ -1005,12 +1043,30 @@ function Today() {
           ></ModalHeader>
           <ModalBody className="pb-3 px-sm-1 mx-20">
             <div>
-              <ModifyReservation data1={filldata} />
+              <ModifyReservation data1={filldata} callBackRefresh={refreshData}/>
             </div>
           </ModalBody>
         </Modal>
       </div>
 
+
+ <div>
+        <Modal
+          isOpen={autoAssign}
+          toggle={() => setAutoAssign(!autoAssign)}
+          className="modal-xl"
+        >
+          <ModalHeader
+            className="modal-lg"
+            toggle={() => setAutoAssign(!autoAssign)}
+          ></ModalHeader>
+          <ModalBody className="pb-3 px-sm-1 mx-20">
+            <div>
+              <AutoAssign operation={"today"}/>
+            </div>
+          </ModalBody>
+        </Modal>
+      </div>
 
       <div>
         <Modal isOpen={options} toggle={() => setOptions(!options)} className='modal-xl' >

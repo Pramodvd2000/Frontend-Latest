@@ -418,6 +418,12 @@ export default [
         icon: <Circle size={12} />,
         navLink: '/dashboard/nightAuditCopy'
       },
+       {
+        id: 'autoAssignRooms',
+        title: 'Auto Assign Rooms',
+        icon: <Circle size={12} />,
+        navLink: '/dashboard/autoAssignRooms'
+      },
     ]
   },
 

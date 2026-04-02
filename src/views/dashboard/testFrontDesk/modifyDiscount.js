@@ -665,6 +665,7 @@ function App(data1) {
   const [rateSummaryModal, setRateSummaryModal] = useState(false)
   const [displayRatesummary, setDisplayRateSummary] = useState(false)
   const [UpdatedRate, setUpdatedRate] = useState(false)
+  const [isDiscountCalled, setIsDiscountCalled] = useState(false)
 
 
 
@@ -882,7 +883,7 @@ function App(data1) {
 
   // Final submit button function
   const finalSubmit = () => {
-
+setIsDiscountCalled(true)
     const finalData = JSON.stringify({
       tempReservationID: data1.data1.data1.tempReservationID,
       reservationID: data1.data1.data1.id,
@@ -904,6 +905,10 @@ function App(data1) {
       .then(postres => {
         if (postres.statusCode === 200) {
           handleSuccess()
+          setIsDiscountCalled(false)
+        }
+        else{
+          setIsDiscountCalled(false)
         }
       })
   }
@@ -1211,7 +1216,7 @@ function App(data1) {
                 <br></br>
                 {/* <br></br> */}
                 <div>
-                  <Button color='primary' className='me-1' style={{ float: 'right' }} onClick={finalSubmit}>
+                  <Button color='primary' className='me-1' style={{ float: 'right' }} onClick={finalSubmit} disabled={isDiscountCalled}>
                     {/* onClick={finalSubmit} */}
                     Confirm
                   </Button>

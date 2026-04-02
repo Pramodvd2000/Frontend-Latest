@@ -33,7 +33,7 @@ const ActivityBox = (data) => {
 
     <li className='mb-1 d-flex justify-content-between' style={{paddingLeft:'10px'}}>
     <div style={{ marginRight: '20px', width: '60%' }}>
-                <strong style={{ fontSize: '16px', color: '#000000' }}>Arrivals Expected:</strong>
+                <strong style={{ fontSize: '16px', color: '#000000' }}>Arrivals Expecteds:</strong>
       </div>
       <div style={{ width: '15%' }}>
         <span style={{ fontSize: '16px', color: '#000000', fontWeight: 'bold', marginLeft: 'auto' }}>{activityData.expArrivalRooms}</span>

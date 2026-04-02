@@ -53,7 +53,7 @@ import RoomRatePage from './roomRate'
 import GroupInformationModal from './groupInfoModal';
 import NewReservationForm from './newReservationForm';
 import GroupModificationLogs from './groupModificationLogs';
-
+import ExtraModification from './extraModification';
 const salutations = [
     { value: "Mr", label: "Mr." },
     { value: "Mrs", label: "Mrs." },
@@ -84,7 +84,8 @@ const AllDefiniteReservations = () => {
     const [roomCountChange, setRoomCountChange] = useState();
     const [datesModification, setDatesModification] = useState();
     const [bookingInfoMod, setBookingInfoMod] = useState();
-    
+    const [extraMod, setExtraMod] = useState();
+
     const [modificationLogs,setModificationLogs] = useState();
     const [groupInfoMod, setGroupInfoMod ] = useState(false);
     const [numberOfRooms, setNumberOfRooms] = useState();
@@ -1908,6 +1909,16 @@ function closeReleaseInventoryModal() {
     }
 
 
+     const extrasModify = () => {
+        if (reservationData.status === 'Cancelled') {
+            return handleError("This operation is not allowed")
+        }
+        setExtraMod(!extraMod)
+        // setModalOpen(false)
+    }
+
+
+
     const groupModificationLogs = () => {
         setModificationLogs(!modificationLogs)
 
@@ -3641,6 +3652,9 @@ function closeReleaseInventoryModal() {
                                         {reservationData && reservationData.status === 'Definite' && <div onClick={bookingInfoModify} className="hoverUnderline" >
                                             Modify Booking information.
                                         </div>}
+                                         {reservationData && reservationData.status === 'Definite' && <div onClick={extrasModify} className="hoverUnderline" >
+                                            Modify Extras
+                                        </div>}
                                         {reservationData && reservationData.status === 'Definite' && <div onClick={() => setOpenReleaseInventory(!openReleaseInventory)} className="hoverUnderline" >
                                             Washout Inventory
                                         </div>}
@@ -3806,6 +3820,8 @@ function closeReleaseInventoryModal() {
 
                 </ModalBody>
             </Modal>}
+
+
 
 
 
@@ -4122,9 +4138,32 @@ function closeReleaseInventoryModal() {
                 </Modal>
 
 
+
+
+
                 // Cancel individual reservation
 
             }
+
+
+
+  {reservationData !== "" && <Modal
+                isOpen={extraMod}
+                toggle={() => setExtraMod(!extraMod)}
+                className="modal-lg"
+            // style={{ maxWidth: '1400px', maxHeight: '60vh' }}
+            >
+                <ModalHeader toggle={() => setExtraMod(!extraMod)} className="modal-lg">
+                    Modify Extras
+                </ModalHeader>
+                <ModalBody className="modal-lg">
+                    <ExtraModification data1={reservationData} />
+
+                </ModalBody>
+            </Modal>}
+
+
+
             {reservationData !== "" &&
                 <Modal
                     isOpen={openCancelIndividualBooking}

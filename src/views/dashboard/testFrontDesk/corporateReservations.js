@@ -82,7 +82,6 @@ import Alerts from "./alerts";
 import Moment from "moment";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress'
-import History from '../reservation/guestHistory'
 
 import ReservationInvoice from "./ReservationInvoices";
 import "./A4style.scss";
@@ -93,7 +92,8 @@ import GuestPreferences from "./prefrence";
 import PastStays from "./futurepaststay";
 import Flatpickr from "react-flatpickr";
 import FixedCharges from "./fixedCharges"
-import { Star } from "react-feather";
+import History from '../reservation/guestHistory'
+import webCheckin from "../../../assets/images/icons/webCheckin.png";
 
 let is_test = false
 
@@ -202,7 +202,6 @@ function AllReservation(props) {
   const [isUpdateWithRatesButton, setIsUpdateWithRatesButton] = useState(false);
   const [showfixedcharges, setshowfixedcharges] = useState(false)
   const [guestHistory, setOpenGuestHistory] = useState();
-
   useEffect(() => {
     const hotelIDData = JSON.stringify({
       hotelID: 1
@@ -395,7 +394,7 @@ function AllReservation(props) {
               <span>{params.data.bookingID}</span>
               {params.data.isWebCheckIn === 1 && (
                 <img
-                  src="/src/assets/images/icons/webCheckin.png"
+                  src={webCheckin}
                   alt="secondary"
                   style={{ width: "40px", height: "25px" }}
                 />
@@ -405,15 +404,6 @@ function AllReservation(props) {
         );
       },
     },
-    // {
-    //   headerName: "B_ID",
-    //   field: "bookingID",
-    //   valueGetter: (params) => params.data?.bookingID || '',
-    //   cellRenderer: BookingIdRenderer,  // Use the React component
-    //   suppressSizeToFit: true,
-    //   width: 150,
-    //   filter: 'agTextColumnFilter'
-    // },
     {
       cellRenderer: BookingIdRenderer,  // Use the React component
       headerName: "Guest",
@@ -793,33 +783,6 @@ function AllReservation(props) {
   }, []);
 
 
-
-  function refreshData (){
-      fetchx(API_URL + "/getReservationGuestDetails", {
-      method: "POST",
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        hotelID: '1',
-        reservationID: filldata['id'],
-      })
-    })
-      .then(result => result.json())
-      .then(rowData => {
-        //console.log(rowData['data']);
-        setDetails(rowData['data'][0]);
-        //console.log(rowData['data'][0]['guestID']);
-
-        fetchx(API_URL + `/getResPaymentInformations?hotelID=1&reservationID=${event['data']['tempReservationID']}`)
-          .then((result) => result.json())
-          .then((rowData) => {
-            setPytDetails(rowData["data"][0]);
-            //console.log(rowData["data"]);
-          })
-          .catch((error) => {
-            //console.log(error);
-          });
-      })
-  }
   // Success modal for split reservation
   const handleSuccess = () => {
     return MySwal.fire(
@@ -931,8 +894,7 @@ function AllReservation(props) {
 
 
   useEffect(() => {
-    // fetchx(API_URL + "/getReservationForFrontDesk?hotelID=1",{}, true)
-    fetchx("/getReservationForFrontDesk?hotelID=1", {}, true)
+    fetchx(API_URL + "/getReservationForFrontDeskCorporate?hotelID=1")
       .then((result) => result.json())
       .then((rowData) => {
         setRowData(rowData["data"]);
@@ -969,7 +931,7 @@ function AllReservation(props) {
 
         let fromDateFormat = fromDate !== '' ? format(new Date(fromDate), 'yyyy-MM-dd') : '';
         let toDateFormat = toDate !== '' ? format(new Date(toDate), 'yyyy-MM-dd') : '';
-        fetch(API_URL + "/getReservationForFrontDesk?fromDate=" + fromDateFormat + "&toDate=" + toDateFormat)
+        fetch(API_URL + "/getReservationForFrontDeskCorporate?fromDate=" + fromDateFormat + "&toDate=" + toDateFormat)
           .then((result) => result.json())
           .then((rowData) => {
             setRowData(rowData["data"]);
@@ -977,7 +939,7 @@ function AllReservation(props) {
           });
       }
       else {
-        fetch(API_URL + "/getReservationForFrontDesk?hotelID=1")
+        fetch(API_URL + "/getReservationForFrontDeskCorporate?hotelID=1")
           .then((result) => result.json())
           .then((rowData) => {
             setRowData(rowData["data"]);
@@ -1019,49 +981,28 @@ function AllReservation(props) {
     setRegistrationCard(false)
   }
 
-  // const sortByColumn = (colId) => {
-  //   gridRef.current = params.api;
+ 
 
-  //   gridRef.current.api.setSortModel([
-  //     { colId: colId, sort: 'asc' } // or 'desc'
-  //   ]);
-  // };
-  // const sortByColumn = (colId) => {
-  //   console.log(gridRef.current)
-  //   if (gridRef.current) {
-  //     gridRef.current.setSortModel([{ colId, sort: 'asc' }]);
-  //   } else {
-  //     console.warn('Grid API not available yet.');
-  //   }
-  // };
-
-  // const sortByColumn = (colId) => {
-  //   if (gridRef.current?.setSortModel) {
-  //     gridRef.current.setSortModel([{ colId, sort: 'asc' }]);
-  //   } else {
-  //     console.warn('Grid API not available or setSortModel not defined.');
-  //   }
-  // };
   const sortByColumn = (columnName) => {
     if (!gridRef.current || !gridColumnApiRef.current) return;
-
+  
     const columnApi = gridColumnApiRef.current;
-
+    
     // Get current column state
     const columnState = columnApi.getColumnState();
     let sortDirection = 'asc';
-
+    
     // Check if column is already sorted
     const currentSort = columnState.find(col => col.colId === columnName && col.sort);
     if (currentSort) {
       sortDirection = currentSort.sort === 'asc' ? 'desc' : 'asc';
     }
-
+    
     // Clear all existing sorts
     columnApi.applyColumnState({
       defaultState: { sort: null },
     });
-
+    
     // Apply new sort
     columnApi.applyColumnState({
       state: [{
@@ -1071,9 +1012,9 @@ function AllReservation(props) {
       defaultState: { sort: null },
     });
   };
+  
 
-
-
+  
 
   const GetproformaInv = () => {
     fetchx(API_URL + `/getProFormaInv?reservationID=${sessionStorage.getItem('reser_ID')}`)
@@ -1169,50 +1110,7 @@ function AllReservation(props) {
             />
           </Col>
 
-          <Col md='2' sm='12' className='mb-1'>
-            <div className="mb-1">
-              <Label className="form-label" for="fromDate">
-                From Date
-              </Label>
-              <Controller
-                control={control}
-                id='fromDate'
-                name='fromDate'
-                render={({ field }) => (
-                  <Flatpickr
-                    // required
-                    options={optionsFilter}
-                    placeholder='YYYY-MM-DD'
-                    {...field}
-                    className='form-control'
 
-                  />
-                )}
-              />
-            </div>
-          </Col>
-          <Col md='2' sm='12' className='mb-1'>
-            <div className='mb-1'>
-              <Label className='form-label' for='toDate'>
-                To Date
-              </Label>
-              <Controller
-                control={control}
-                id='toDate'
-                name='toDate'
-                render={({ field }) => (
-                  <Flatpickr
-                    placeholder='YYYY-MM-DD'
-                    {...field}
-                    options={optionsToDate}
-                    // options={{ allowInput: true }}
-                    className='form-control'
-
-                  />
-                )}
-              />
-            </div>
-          </Col>
           <Col md='2' sm='12' className='mb-1'>
 
             <div className='demo-inline-spacing'>
@@ -1376,7 +1274,7 @@ function AllReservation(props) {
           ></ModalHeader>
           <ModalBody className="pb-3 px-sm-1 mx-20">
             <div>
-              <ModifyReservation data1={filldata} callBackRefresh={refreshData}/>
+              <ModifyReservation data1={filldata} />
             </div>
           </ModalBody>
         </Modal>
@@ -1504,12 +1402,13 @@ function AllReservation(props) {
           <ModalBody>
 
 
-            {filldata.length != 0 && guestHistory !== false && <History data1={filldata} operation='reservationHistory' />}
+            {filldata.length != 0 && guestHistory !== false && <History data1={filldata} operation='reservationHistory'/>}
 
           </ModalBody>
 
         </Modal>
       </div>
+
 
       <div>
         <Modal
@@ -1970,7 +1869,11 @@ function AllReservation(props) {
                       {/* <AlertTriangle style={{ height: "20px" }} /> */}
                       Alerts
                     </div>
+                    <div className="hoverUnderline" onClick={() => setOpenGuestHistory(true)} >
 
+                      {/* <AlertTriangle style={{ height: "20px" }} /> */}
+                      Guest History
+                    </div>
                   </Col>
                   <Col md="2" sm="12" className="mb-1">
                     {/* <Col md="6" sm="12" className="mb-1"> */}
@@ -2112,12 +2015,8 @@ function AllReservation(props) {
                         Membership Since :<b> {details['membershipSince'] === 'Invalid Date' ? '' : details['membershipSince']}</b><br></br>
                         Membership Number:<b> {details['membershipNo']}   </b><br></br>
                         Membership Level :<b> {details['levelname']}</b><br></br>
-                        Past Nights  :<b> {details['numOfNights']}</b><br></br>
+                        Past Nights :<b> {details['numOfNights']}</b><br></br>
                         Past Stay :<b> {details['numOfStay']}</b><br></br>
-                        {/* <link  onClick={() => setOpenGuestHistory(true)} >
-
-                          Guest History
-                        </link> */}
                         <span
                           style={{ color: "blue", textDecoration: "underline", cursor: "pointer" }}
                           onClick={() => setOpenGuestHistory(true)}

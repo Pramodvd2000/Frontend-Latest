@@ -300,6 +300,35 @@ function StayOver() {
     );
   }, []);
 
+
+
+      function refreshData (){
+          fetchx(API_URL + "/getReservationGuestDetails", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            hotelID: '1',
+            reservationID: filldata['id'],
+          })
+        })
+          .then(result => result.json())
+          .then(rowData => {
+            //console.log(rowData['data']);
+            setDetails(rowData['data'][0]);
+            //console.log(rowData['data'][0]['guestID']);
+    
+            fetchx(API_URL + `/getResPaymentInformations?hotelID=1&reservationID=${event['data']['tempReservationID']}`)
+              .then((result) => result.json())
+              .then((rowData) => {
+                setPytDetails(rowData["data"][0]);
+                //console.log(rowData["data"]);
+              })
+              .catch((error) => {
+                //console.log(error);
+              });
+          })
+      }
+      
   return (
     <div>
       {/* <button onClick={buttonListener}>Push Me</button> */}
@@ -528,7 +557,7 @@ function StayOver() {
           ></ModalHeader>
           <ModalBody className="pb-3 px-sm-1 mx-20">
             <div>
-              <ModifyReservation data1={filldata} />
+              <ModifyReservation data1={filldata} callBackRefresh={refreshData}/>
             </div>
           </ModalBody>
         </Modal>

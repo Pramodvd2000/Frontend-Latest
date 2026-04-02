@@ -33,6 +33,8 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress'
 import InventoryEntryTable from './inventoryEntryTable'
 import RoomRatePage from './roomRate';
+import ExtraModification from './extraModification';
+
 const AllEnquiryReservations = () => {
 
     const navigate = useNavigate()
@@ -64,6 +66,7 @@ const AllEnquiryReservations = () => {
     const [paymentTypeMod, setPaymentTypeMod] = useState();
     const [filldata, setfilldata] = useState();
     const [options1, setOptions1] = useState();
+    const [extraMod, setExtraMod] = useState();
 
 
     const defaultColDef = useMemo(() => ({
@@ -835,6 +838,15 @@ const AllEnquiryReservations = () => {
         }
     };
 
+         const extrasModify = () => {
+        if (reservationData.status === 'Cancelled') {
+            return handleError("This operation is not allowed")
+        }
+        setExtraMod(!extraMod)
+        // setModalOpen(false)
+    }
+
+
 
     // Modal for definite reservation conversion
     const convertToDefinite = () => {
@@ -1450,7 +1462,9 @@ setOptions(!options)
                                         {reservationData && reservationData.status !== 'Definite' && <div onClick={bookingInfoModify} className="hoverUnderline" >
                                             Modify Booking information.
                                         </div>}
-
+  {reservationData && reservationData.status === 'Enquiry' && <div onClick={extrasModify} className="hoverUnderline" >
+                                            Modify Extras
+                                        </div>}
                                     </Col>
 
                                 </Row>
@@ -1679,6 +1693,22 @@ setOptions(!options)
                             </Form>
                         </CardBody>
                     </Card>
+                </ModalBody>
+            </Modal>}
+
+
+  {reservationData !== "" && <Modal
+                isOpen={extraMod}
+                toggle={() => setExtraMod(!extraMod)}
+                className="modal-lg"
+            // style={{ maxWidth: '1400px', maxHeight: '60vh' }}
+            >
+                <ModalHeader toggle={() => setExtraMod(!extraMod)} className="modal-lg">
+                    Modify Extras
+                </ModalHeader>
+                <ModalBody className="modal-lg">
+                    <ExtraModification data1={reservationData} />
+
                 </ModalBody>
             </Modal>}
 

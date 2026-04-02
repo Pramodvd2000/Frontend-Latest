@@ -432,12 +432,12 @@ const VerticalLayout = (props) => {
       else {
         let filteredNavigation = navigation.filter(item => item.id !== 'GM Dashboard');
         console.log(resp.data[0].id)
-        if (resp.data[0].id !== 10 || resp.data[0].id !== 14) {
-          filteredNavigation = filteredNavigation.filter(item => item.id !== 'Group Reservation');
-            filteredNavigation = filterNavItems(filteredNavigation, resp.data[0].id)
+        // if (resp.data[0].id !== 10 || resp.data[0].id !== 14) {
+        //   filteredNavigation = filteredNavigation.filter(item => item.id !== 'Group Reservation');
+        //     filteredNavigation = filterNavItems(filteredNavigation, resp.data[0].id)
 
 
-        } 
+        // } 
 
         if (resp.data[0].isAutoNIghtAudit !== 1) {
           filteredNavigation = filteredNavigation.map(item => {

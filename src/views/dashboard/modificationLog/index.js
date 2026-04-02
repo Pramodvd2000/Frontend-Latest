@@ -34,7 +34,7 @@ const ModificationLogs = (data) => {
 
       const reservationData = JSON.stringify({
       })
-      fetchx(API_URL + '/getModificationLogsByDate', {
+      fetchx(API_URL + '/getModificationLogs', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json; charset=UTF-8'
@@ -55,7 +55,7 @@ const ModificationLogs = (data) => {
       })
 
 
-      fetchx(API_URL + '/getModificationLogsByDate', {
+      fetchx(API_URL + '/getModificationLogs', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json; charset=UTF-8'
@@ -93,7 +93,7 @@ const ModificationLogs = (data) => {
   
           let fromDateFormat = fromDate !== '' ? format(new Date(fromDate), 'yyyy-MM-dd') : '';
           let toDateFormat = toDate !== '' ? format(new Date(toDate), 'yyyy-MM-dd') : '';
-          fetch(API_URL + "/getModificationLogsByDate?fromDate=" + fromDateFormat + "&toDate=" + toDateFormat)
+          fetch(API_URL + "/getModificationLogs?fromDate=" + fromDateFormat + "&toDate=" + toDateFormat)
             .then((result) => result.json())
             .then((rowData) => {
               setLogData(rowData["data"]);
@@ -101,7 +101,7 @@ const ModificationLogs = (data) => {
             });
         }
         else {
-          fetch(API_URL + "/getModificationLogsByDate?hotelID=1")
+          fetch(API_URL + "/getModificationLogs?hotelID=1")
             .then((result) => result.json())
             .then((rowData) => {
               setRowData(rowData["data"]);
@@ -168,7 +168,7 @@ const ModificationLogs = (data) => {
         const cellContent = modificationLog.map((mod, index) => {
           const { "Modified field name": field, "Old value": oldValue, "New value": newValue, "Effect": effect, "ArrivalDate": ArrivalDate, "DepartureDate": DepartureDate, "Pax": PAX } = mod;
           let changeDescription = '';
-
+console.log(field, oldValue, newValue, effect)
           if (oldValue === '' && newValue === '' && Array.isArray(effect)) {
             changeDescription = `Reservation created from ${formatDate(new Date(ArrivalDate))} to ${formatDate(new Date(DepartureDate))} With PAX count ${PAX} `;
           }
@@ -187,9 +187,14 @@ const ModificationLogs = (data) => {
           else if (oldValue === '' && newValue === '') {
             changeDescription = `Reservation cancelled`
           }
+           else if (oldValue !== '' && newValue === 'extra removed') {
+            changeDescription = `Removed ${oldValue}`;
+          }
           else if (oldValue !== '' && oldValue !== null) {
             changeDescription = `Modified from ${oldValue} to ${newValue}`;
-          } else {
+          }
+         
+           else {
             changeDescription = `Newly added ${field} ${newValue}`;
           }
 

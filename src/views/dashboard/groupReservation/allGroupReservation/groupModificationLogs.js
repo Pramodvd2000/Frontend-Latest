@@ -213,20 +213,44 @@ const GroupModificationLogs = ({ reservationData }) => {
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {modLog.map((mod, index) => {
+              console.log('Modification entry:', mod); // Debug log to inspect the structure of each modification
               const displayName = fieldNameMap[mod.fieldName] || mod.fieldName;
-              const oldValue = mod.oldValue?.trim() || '[ ]';
-              const newValue = mod.newValue?.trim() || '[ ]';
-    
-              if (oldValue || newValue) {
-                return (
-                  <div key={index}>
-                    <strong>{displayName}: </strong>
-                    <span style={{ color: '#ff4444' }}>{oldValue}</span>
-                    <span> → </span>
-                    <span style={{ color: '#4caf50' }}>{newValue}</span>
-                  </div>
-                );
-              }
+             // ✅ Raw values for logic
+        const oldValueRaw = mod.oldValue?.trim() || '';
+        const newValueRaw = mod.newValue?.trim() || '';
+
+        // ✅ Display values
+        const oldValue = oldValueRaw || '[ ]';
+        const newValue = newValueRaw || '[ ]';
+
+        const isExtraDesc = mod.fieldName === 'extraDesc';
+
+        const isNewlyAdded = !oldValueRaw && newValueRaw;
+        const isRemoved = oldValueRaw && !newValueRaw;
+
+        if (oldValueRaw || newValueRaw) {
+          return (
+            <div key={index}>
+              <strong>{displayName}: </strong>
+
+              {isExtraDesc && isNewlyAdded ? (
+                <span style={{ color: '#4caf50' }}>
+                  Newly Added → {newValue}
+                </span>
+              ) : isExtraDesc && isRemoved ? (
+                <span style={{ color: '#ff4444' }}>
+                  {oldValue} → Removed
+                </span>
+              ) : (
+                <>
+                  <span style={{ color: '#ff4444' }}>{oldValue}</span>
+                  <span> → </span>
+                  <span style={{ color: '#4caf50' }}>{newValue}</span>
+                </>
+              )}
+            </div>
+          );
+        }
               return null;
             })}
           </div>

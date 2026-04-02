@@ -29,7 +29,7 @@ import TomarrowDep from './tomarrowDep'
 import AllDefiniteReservations from './allGroupReservation'
 import AdvanceSearch from './advanceSearch'
 import API_URL from '../../../config'
-
+import CorporateReservations from './corporateReservations'
 
 const TableWithData = () => {
   // ** State
@@ -162,6 +162,18 @@ useEffect(() => {
         </NavItem>
        
 
+               <NavItem>
+          <NavLink
+            active={active === '10'}
+            onClick={() => {
+              toggle('10')
+            }}
+          >
+            CORPORATE RESERVATIONS
+          </NavLink>
+        </NavItem>
+       
+
 
       </Nav>
      {active==='2' && <Nav tabs filled>
@@ -290,6 +302,13 @@ useEffect(() => {
        {active==='15' && <TabContent activeTab={active}>
         <TabPane tabId='15'>
           <AdvanceSearch/>
+        </TabPane>
+        </TabContent>}
+
+          {/*  Corporate Reservations */}
+        {active==='10' && <TabContent activeTab={active}>
+        <TabPane tabId='10'>
+          <CorporateReservations/>
         </TabPane>
         </TabContent>}
 </div>

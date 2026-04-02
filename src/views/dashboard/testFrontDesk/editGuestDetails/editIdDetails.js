@@ -73,6 +73,7 @@ const IDTypes = [
 
 
 const Floor = ({ stepper2, type, data3 }) => {
+  console.log("data in id details", data3)
   const [idDetail, setIDDetails] = useState();
   const [reload, setreload] = useState(true);
   const [load, setload] = useState(true);
@@ -357,17 +358,7 @@ const Floor = ({ stepper2, type, data3 }) => {
   const onSubmit = data => {
 
     // fetchx("http://13.234.187.190:14702/v4/imgupload", {
-    fetchx(API_URL + "/imgupload", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        fetchImageUrls();
-
-      })
-      .catch((error) => {
-      });
+  
     // Submit form data
     setData(data)
     data['IDType'] = selectedValue
@@ -402,6 +393,20 @@ const Floor = ({ stepper2, type, data3 }) => {
                   confirmButton: 'btn btn-danger'
                 }
               });
+
+                fetchx(API_URL + "/imgupload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        fetchImageUrls();
+
+      })
+      .catch((error) => {
+      });
+
+      
               swalInstance.then((result) => {
                 if (result.isConfirmed) {
                   navigate('');

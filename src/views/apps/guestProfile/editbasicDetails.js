@@ -49,6 +49,8 @@ import { useNavigate } from "react-router-dom";
 // ** Third Party Components
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 const MySwal = withReactContent(Swal);
 
@@ -587,7 +589,7 @@ const TagGuestCompany  =() =>{
                   />
                 </div>
               </Col>
-              <Col md="3" sm="12">
+              {/* <Col md="3" sm="12">
                 <div className="mb-1">
                   <Label className="form-label" for="phonenumber">
                     Phone Number
@@ -610,7 +612,42 @@ const TagGuestCompany  =() =>{
                     )}
                   />
                 </div>
-              </Col>
+              </Col> */}
+
+              {data1 && <Col md="3" sm="12">
+  <div className="mb-1">
+    <Label className="form-label" for="phonenumber">
+      Phone Number
+    </Label>
+
+    <Controller
+      name="phonenumber"
+      control={control}
+      render={({ field }) => (
+        <PhoneInput
+          country={"in"}   // default country
+          enableSearch={true}
+          // value={field.value}
+            value={data1?.phoneNumber || ""}
+          // onChange={(phone) => field.onChange(phone)}
+             onChange={(phone, country, e, formattedValue) => {
+              const dialCode = country.dialCode;
+
+              // If country changed → reset number except dial code
+              if (!phone.startsWith(dialCode)) {
+                field.onChange("+" + dialCode);
+              } else {
+                field.onChange(phone);
+              }
+            }}
+          inputClass="form-control"
+          containerClass="w-100"
+        />
+      )}
+    />
+  </div>
+</Col>
+}
               <Col md="3" sm="12">
                 <div className="mb-1">
                   <Label className="form-label" for="vip1">

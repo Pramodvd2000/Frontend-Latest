@@ -33,7 +33,7 @@ sessionStorage.removeItem('groupReservationID')
 import CompanyProfile from './companyProfile/index'
 import Booker from './companyProfile/booker'
 import PackageCode from './packageConfig'
-
+import ExtraModification from './extraModifcationCreations'
 
 const defaultValues = {
     checkIn: null,
@@ -143,7 +143,8 @@ let ReservationTypeOptions = [
         })
 ]
 
-
+sessionStorage.removeItem("groupReservationID");
+sessionStorage.removeItem("extras")
 const GroupReservation = () => {
 
     const navigate = useNavigate()
@@ -196,14 +197,15 @@ const GroupReservation = () => {
     const [groupNameData, setGroupNameData] = useState()
     const [selectedGroupName, setSelectedGroupName] = useState();
     const [openGroupModal, setOpenGroupModal] = useState(false)
-
-
+    const [extraMod, setExtraMod] = useState(null)
+    const [extraData, setExtraData] = useState(null)
+    const [companyError, setCompanyError] = useState('');
     const toggle = id => {
         open === id ? setOpen() : setOpen(id)
     }
 
 
-
+    const formValues = watch()
 
     const checkIn = watch('coming');
     const checkIn1 = watch('incomeDate')
@@ -362,7 +364,7 @@ const GroupReservation = () => {
     }
 
 
-const onGroupSelect = (rowData) => {
+    const onGroupSelect = (rowData) => {
         setSelectedGroupName(rowData);
         setGroupNameModal(false);
     };
@@ -372,7 +374,7 @@ const onGroupSelect = (rowData) => {
         setOpenPackageModal(true)
     }
 
- const handleGroupNameClear = () => {
+    const handleGroupNameClear = () => {
         setSelectedGroupName()
     };
 
@@ -381,6 +383,11 @@ const onGroupSelect = (rowData) => {
         setCompanyProfile(true)
     }
 
+    function toggleModal4(data) {
+        console.log(data)
+        setExtraData(data)
+
+    }
 
     //ag-grid cell clcked value
     const cellClickedListener = useCallback(event => {
@@ -623,7 +630,7 @@ const onGroupSelect = (rowData) => {
     //API to get company list
     useEffect(() => {
 
-     
+
 
 
 
@@ -815,7 +822,7 @@ const onGroupSelect = (rowData) => {
         )
     }, [])
 
-    
+
 
     //On submit function
     const onSubmit = data => {
@@ -864,40 +871,40 @@ const onGroupSelect = (rowData) => {
             setChildrenCountState(data.childCount.value)
             setNumberOfRoomsState(Number(data.roomQuantity))
 
-                fetchx(API_URL + "/checkAvailabilityForGroupReservation", {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body: availabilityCheck
-                }).then((res) => res.json())
-                    .then(postres => {
-                        if (postres['data'] == 1) {
-                            MySwal.fire({
-                                title: "Confirmation Required",
-                                text: "Rooms are available, Do you want to continue?",
-                                icon: "question",
-                                buttonsStyling: false,
-                                showCancelButton: true,
-                                confirmButtonText: "Yes, Continue",
-                                cancelButtonText: "No",
-                                reverseButtons: true,
-                                allowOutsideClick: false,
-                                customClass: {
-                                    confirmButton: 'btn btn-primary ms-1',
-                                    cancelButton: 'btn btn-outline-danger ms-1'
-                                },
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    handleSuccess("Please proceed to make a booking.")
-                                }
-                                else {
+            fetchx(API_URL + "/checkAvailabilityForGroupReservation", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: availabilityCheck
+            }).then((res) => res.json())
+                .then(postres => {
+                    if (postres['data'] == 1) {
+                        MySwal.fire({
+                            title: "Confirmation Required",
+                            text: "Rooms are available, Do you want to continue?",
+                            icon: "question",
+                            buttonsStyling: false,
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, Continue",
+                            cancelButtonText: "No",
+                            reverseButtons: true,
+                            allowOutsideClick: false,
+                            customClass: {
+                                confirmButton: 'btn btn-primary ms-1',
+                                cancelButton: 'btn btn-outline-danger ms-1'
+                            },
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                handleSuccess("Please proceed to make a booking.")
+                            }
+                            else {
 
-                                }
-                            })
-                        }
-                        else {
-                            handleError(postres['data'])
-                        }
-                    })
+                            }
+                        })
+                    }
+                    else {
+                        handleError(postres['data'])
+                    }
+                })
             // }
         }
     }
@@ -957,9 +964,11 @@ const onGroupSelect = (rowData) => {
             transactionID: data.transactionID,
             authID: data.authID,
             amount: data.amount,
-            extraDesc: selectedOptionExtras,
+            // extraDesc: selectedOptionExtras,
+            extraDesc: sessionStorage.getItem('extras'),
+
             features: (data.features === undefined ? null : data.features),
-         //   accountID: selectedGroupName.companyid
+            //   accountID: selectedGroupName.companyid
         })
 
         fetchx(API_URL + "/createEnqiryForGroupReservation", {
@@ -1009,6 +1018,73 @@ const onGroupSelect = (rowData) => {
         else {
             setSelectedOption('')
         }
+    };
+
+
+
+    const otherDetails = {
+        shoulderStartDate: formValues?.shStartDate
+            ? Moment(new Date(formValues.shStartDate)).format('YYYY-MM-DD')
+            : null,
+
+        shoulderEndDate: formValues?.shEndDate
+            ? Moment(new Date(formValues.shEndDate)).format('YYYY-MM-DD')
+            : null,
+
+        groupID: selectedGroupName?.companyid || null,
+        groupName: selectedGroupName?.accountName || null,
+
+        checkInDate: checkIndateState,
+        checkOutDate: checkOutdateState,
+        cutOfDate: cutOfDatedateState,
+
+        adults: adultCountState,
+        children: childrenCountState,
+        numberOfRooms: numberOfRoomsState,
+
+        reservationType: formValues?.resTypeName?.value || null,
+        paymentType: selectedOption || null,
+
+        companyName:
+            selectedCompany?.companyid ||
+            sessionStorage.getItem('companyName') ||
+            null,
+
+        sourceName:
+            selectedOptionSource?.length === undefined
+                ? selectedOptionSource?.value
+                : selectedOptionSource?.[0]?.value || null,
+
+        marketName:
+            selectedOptionMarket?.length === undefined
+                ? selectedOptionMarket?.value
+                : selectedOptionMarket?.[0]?.value || null,
+
+        originName: formValues?.originName?.value || null,
+
+        eta: formValues?.eta || null,
+        etd: formValues?.etd || null,
+
+        agentName: selectedAgent?.companyid || null,
+        accountManagerName: formValues?.AccountManager?.value || null,
+        bookerName: selectedBooker?.id || null,
+
+        comments: formValues?.comment1 || '',
+        billingInstructions: formValues?.billingInstructions || '',
+
+        cardNumber: formValues?.cardNumber || null,
+        cardHolderName: formValues?.cardHolderName || null,
+
+        expiryDate: formValues?.expiryDate
+            ? Moment(new Date(formValues.expiryDate)).format('YYYY-MM')
+            : null,
+
+        transactionID: formValues?.transactionID || '',
+        authID: formValues?.authID || '',
+        amount: formValues?.amount || 0.00,
+
+        extraDesc: selectedOptionExtras || null,
+        features: formValues?.features || null
     };
 
     return (
@@ -1293,37 +1369,37 @@ const onGroupSelect = (rowData) => {
                                                                 </div>
                                                             }
                                                         </Col>
-                                                        </Row>
+                                                    </Row>
 
 
-                                                        {
-                                                            yesterday &&
-                                                            <Col md='3' sm='12'>
-                                                                <div className='mb-1'>
-                                                                    <Label className='form-label' for='cutOfDate'>
-                                                                        Cut Off Date <spam style={{ color: 'red' }}>*</spam>
-                                                                    </Label>
-                                                                    <Controller
-                                                                        control={control}
-                                                                        id='cutOfDate'
-                                                                        defaultValue={arrivalDate}
-                                                                        name='cutOfDate'
-                                                                        render={({ field }) => (
-                                                                            <Flatpickr
-                                                                                {...field}
-                                                                                options={optionForYesterDay}
-                                                                                placeholder='YYYY-MM-DD '
-                                                                                className={classnames('form-control', {
-                                                                                    'is-invalid': data !== null && data.cutOfDate === null
-                                                                                })}
-                                                                            />
-                                                                        )}
-                                                                    />
-                                                                </div>
-                                                            </Col>
-                                                        }
+                                                    {
+                                                        yesterday &&
+                                                        <Col md='3' sm='12'>
+                                                            <div className='mb-1'>
+                                                                <Label className='form-label' for='cutOfDate'>
+                                                                    Cut Off Date <spam style={{ color: 'red' }}>*</spam>
+                                                                </Label>
+                                                                <Controller
+                                                                    control={control}
+                                                                    id='cutOfDate'
+                                                                    defaultValue={arrivalDate}
+                                                                    name='cutOfDate'
+                                                                    render={({ field }) => (
+                                                                        <Flatpickr
+                                                                            {...field}
+                                                                            options={optionForYesterDay}
+                                                                            placeholder='YYYY-MM-DD '
+                                                                            className={classnames('form-control', {
+                                                                                'is-invalid': data !== null && data.cutOfDate === null
+                                                                            })}
+                                                                        />
+                                                                    )}
+                                                                />
+                                                            </div>
+                                                        </Col>
+                                                    }
 
-                                                        
+
                                                     <Col md='3' sm='12'>
                                                         <div>
                                                             <Label className='form-label' for='adultCount'>
@@ -1875,7 +1951,7 @@ const onGroupSelect = (rowData) => {
 
 
                                         {/* Extras */}
-                                        <Col md='3' sm='12'>
+                                        {/* <Col md='3' sm='12'>
                                             <div className='mb-1'>
                                                 <Label className='form-label' for='extras' >
                                                     Select Extra
@@ -1899,8 +1975,74 @@ const onGroupSelect = (rowData) => {
                                                     )}
                                                 />
                                             </div>
-                                        </Col>
+                                        </Col> */}
 
+
+                                        <Col md='4' sm='8'>
+                                            <div className='mb-1'>
+                                                <Label className='form-label' for='extras'>
+                                                    Select Extra
+                                                </Label>
+                                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                    {extraData && console.log(extraData, extraData?.extraDescription?.join(', '))}
+                                                    <Input key={extraData?.extraDescription} // forces refresh
+
+                                                        type="textarea" name='extras' placeholder='Select extras'
+                                                        //                                                        value={
+                                                        //   extraData?.map(item => `• ${item.label}`).join('\n') || ''
+                                                        // }
+
+                                                        value={
+                                                            //  get from sessionStorage
+                                                            (JSON.parse(sessionStorage.getItem("extras")) || [])
+                                                                .map(item => `• ${item.label}`)
+                                                                .join('\n')
+                                                        }
+                                                        // readOnly
+                                                        style={{ cursor: 'pointer' }}
+                                                        onClick={() => {
+                                                            // if (!selectedGroupName?.companyid) {
+                                                            //     setCompanyError("Please select Company Name first");
+                                                            //     return;
+                                                            // }
+                                                            setCompanyError('');
+                                                            setExtraMod(!extraMod);
+                                                        }}
+
+                                                    // onClick={() => {
+                                                    //     if (!selectedGroupName?.companyid) {
+                                                    //         setCompanyError("Please select Company Name first");
+                                                    //         return;
+                                                    //     }
+
+                                                    //     if (!formValues?.resTypeName?.value) {
+                                                    //         setCompanyError("Please select Reservation Type");
+                                                    //         return;
+                                                    //     }
+
+                                                    //     if (!selectedOption) {
+                                                    //         setCompanyError("Please select Payment Type");
+                                                    //         return;
+                                                    //     }
+
+                                                    //     if (!formValues?.originName?.value) {
+                                                    //         setCompanyError("Please select Origin");
+                                                    //         return;
+                                                    //     }
+
+                                                    //     // ✅ clear error if all valid
+                                                    //     setCompanyError('');
+                                                    //     setExtraMod(!extraMod);
+                                                    // }}
+                                                    />
+                                                </div>
+                                                {companyError && (
+                                                    <div style={{ color: 'red', fontSize: '12px', marginTop: '4px' }}>
+                                                        {companyError}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </Col>
 
                                         {/* Agent Options */}
                                         <Col md='3' sm='12'>
@@ -2254,6 +2396,28 @@ const onGroupSelect = (rowData) => {
 
                 </Accordion>
             </Card>
+
+            <Modal isOpen={companyProfile} toggle={() => setCompanyProfile(!companyProfile)} className='modal-xl'>
+                <ModalHeader toggle={() => setCompanyProfile(!companyProfile)}>Company Profile</ModalHeader>
+                <ModalBody>
+                    <CompanyProfile toggleModal={toggleModal} />
+                </ModalBody>
+            </Modal>
+            {/* Extra Modal */}
+            <Modal isOpen={extraMod} toggle={() => setExtraMod(!extraMod)} className="modal-lg"            >
+                <ModalHeader toggle={() => setExtraMod(!extraMod)} className="modal-lg">
+                    Modify Extras
+                </ModalHeader>
+                <ModalBody className="modal-lg">
+                    {/* {selectedGroupName && <ExtraModification data1={selectedGroupName} toggleModal={toggleModal4} eta={data?.eta || '15:00'}
+                        etd={data?.etd || '12:00'} otherDetails={otherDetails} />} */}
+                    <ExtraModification data1={selectedGroupName} toggleModal={toggleModal4} eta={data?.eta || '15:00'}
+                        etd={data?.etd || '12:00'} otherDetails={otherDetails} />
+
+                </ModalBody>
+            </Modal>
+
+
         </div>
     )
 }

@@ -261,6 +261,7 @@ const RoomTypeWiseDetails = lazy(() =>  import("../../views/dashboard/BookingEng
 const RoomAmeneties = lazy(() =>  import("../../views/dashboard/BookingEngineConfig/roomAmeneties"));
 const RoomDetails = lazy(() =>  import("../../views/dashboard/BookingEngineConfig/roomDetails"));
 const RoomTypeImages = lazy(() =>  import("../../views/dashboard/BookingEngineConfig/roomTypeImages"));
+const DashboardAutoAssignRooms = lazy(() =>  import("../../views/dashboard/autoAssignRooms"));
 
 const DashboardRoutes = [
   {
@@ -286,6 +287,10 @@ const DashboardRoutes = [
   {
     path: '/dashboard/departmentconfiguration',
     element: <GuestComplaintConfiguration />
+  },
+  {
+    path: '/dashboard/autoAssignRooms',
+    element: <DashboardAutoAssignRooms />
   },
   {
     path: '/reports/mealplanreport',

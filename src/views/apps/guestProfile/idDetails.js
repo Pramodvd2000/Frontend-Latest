@@ -41,6 +41,7 @@ const IDTypes = [
 
 
 const IDDetails = ({ stepper, type, data1 }) => {
+  console.log("data1 in id details", data1)
   const [idDetail, setIDDetails] = useState();
   const [reload, setreload] = useState(true);
   const [load, setload] = useState(true);
@@ -196,17 +197,17 @@ const IDDetails = ({ stepper, type, data1 }) => {
     formData.append("docrefno", "guest_" + localStorage.getItem('guestID'));
 
     // fetchx("http://13.234.187.190:14702/v4/imgupload", {
-    fetchx(API_URL + "/imgupload", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        fetchImageUrls();
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    // fetchx(API_URL + "/imgupload", {
+    //   method: "POST",
+    //   body: formData,
+    // })
+    //   .then((response) => response.json())
+    //   .then((result) => {
+    //     fetchImageUrls();
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error:", error);
+    //   });
 
 
 
@@ -246,12 +247,26 @@ const IDDetails = ({ stepper, type, data1 }) => {
               confirmButton: 'btn btn-danger'
             }
           });
+      
+
           swalInstance.then((result) => {
             if (result.isConfirmed) {
               navigate('');
             }
           });
           if (res['status'] == 200) {
+                fetchx(API_URL + "/imgupload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        fetchImageUrls();
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
             fetchx(API_URL + `/getiddetails?guestID=${localStorage.getItem("guestID")}`)
               .then(result => result.json())
               .then(rowData => {

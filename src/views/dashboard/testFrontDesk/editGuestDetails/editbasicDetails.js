@@ -25,7 +25,8 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 const MySwal = withReactContent(Swal);
-
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 const defaultValues = {
   salutation1: null,
   name1: "",
@@ -190,6 +191,9 @@ const Floor = ({ stepper2, type, data3 }) => {
   const [flag, setflag] = useState(false);
 
   const onSubmit = (data) => {
+    console.log(data.beginDate1,data3.data2.dob
+            , data.beginDate1
+            ,Moment(String(new Date(data.beginDate1[0]))).format("YYYY-MM-DD"))
     setData(data);
     if (data.firstName !== null && data.lastName !== null) {
       let createmarketGroup = JSON.stringify({
@@ -211,6 +215,11 @@ const Floor = ({ stepper2, type, data3 }) => {
         data.beginDate1 === data3.data2.dob
             ? data.beginDate1
             : Moment(String(new Date(data.beginDate1[0]))).format("YYYY-MM-DD"),
+  //       dob:
+  // data.beginDate1?.[0]
+  //   ? Moment(data.beginDate1[0]).format("YYYY-MM-DD")
+  //   : null,
+
         vipID: 
         (data.vip1 === undefined)
         ? data3.data2.vipID
@@ -455,8 +464,11 @@ return (
                     placeholder="+919847665433"
                     render={({ field }) => (
                       <Cleave
-                        pattern="^(?:\+[0-9]{10,13}|[0-9]{10,13})$"
-                        title="Phone number Can take Max 12 digits with Country Code, 10 digits without Country Code"
+                        // pattern="^(?:\+[0-9]{10,13}|[0-9]{10,13})$"
+                        // title="Phone number Can take Max 12 digits with Country Code, 10 digits without Country Code"
+                        pattern="^\+[1-9]\d{7,14}$"
+title="Enter a valid phone number with country code (e.g., +919876543210). Maximum 15 digits."
+
                         {...field}
                         value={data3.data2["guestNumbers"]}
                         className={classnames("form-control")}
@@ -466,6 +478,28 @@ return (
                   />
                 </div>
               </Col>
+              <Col md="3" sm="12">
+  <div className="mb-1">
+    <Label className="form-label" for="phonenumber">
+      Phone Number
+    </Label>
+
+    <Controller
+      name="phonenumber"
+      control={control}
+      render={({ field }) => (
+        <PhoneInput
+          country={"in"}   // default country
+          enableSearch={true}
+          value={field.value}
+          onChange={(phone) => field.onChange(phone)}
+          inputClass="form-control"
+          containerClass="w-100"
+        />
+      )}
+    />
+  </div>
+</Col>
               <Col md="3" sm="12">
                 <div className="mb-1">
                   <Label className="form-label" for="vip1">

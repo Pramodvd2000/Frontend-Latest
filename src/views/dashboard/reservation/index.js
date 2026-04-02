@@ -38,7 +38,7 @@ import 'ag-grid-enterprise'
 import { AgGridReact } from 'ag-grid-react'
 import '/node_modules/ag-grid-community/styles/ag-grid.css'
 import '/node_modules/ag-grid-community/styles/ag-theme-alpine.css'
-
+import ExtraModification from './extraModification'
 
 
 import API_URL from '../../../config'
@@ -690,7 +690,9 @@ const Extra = ({ onSubmit1 }) => {
   const [selectedOptionSource, setSelectedOptionSource] = useState(null);
   const [selectedOptionMarket, setSelectedOptionMarket] = useState(null);
   const [selectedOptionExtras, setSelectedOptionExtras] = useState(null);
-
+  const [extraMod, setExtraMod] = useState(null)
+  const [extraData, setExtraData] = useState(null)
+  const [disableOnClick, setDisableOnClick] = useState(null)
 
   const defaultValues6 = {
     extras: null,
@@ -961,6 +963,25 @@ const Extra = ({ onSubmit1 }) => {
   }
 
 
+  function toggleModal4(data) {
+    console.log(data)
+    setExtraData(data)
+    // fetchx(API_URL + '/getAgentList?hotelID=1')
+    //   .then(result => result.json())
+    //   .then(resp => {
+    //     getAgentList(resp['data'])
+    //   })
+
+    // fetchx(API_URL + `/getCompanyNames`)
+    //   .then(result => result.json())
+    //   .then(rowData => {
+    //     setRowData(rowData['data'])
+    //   })
+
+    // setCompanyProfile(!companyProfile)
+
+  }
+
   // booker onsubmit modal close
   function toggleModal2() {
     fetchx(API_URL + '/getAllBookerList', {
@@ -1022,7 +1043,7 @@ const Extra = ({ onSubmit1 }) => {
 
   //onsubmit data post
   const onSubmit = data => {
-
+    setDisableOnClick(true)
     setData(data)
     sessionStorage.setItem('sourceID', (selectedOptionSource.length === undefined ? selectedOptionSource.label : selectedOptionSource[0].label))
     sessionStorage.setItem('marketID', (selectedOptionMarket.length === undefined ? selectedOptionMarket.label : selectedOptionMarket[0].label))
@@ -1054,10 +1075,19 @@ const Extra = ({ onSubmit1 }) => {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
       body: createmarketGroup
-    }).then((res) => {
-      onSubmit1();
-      // console.log(res)
     })
+      .then(result => result.json())
+      .then((res) => {
+        onSubmit1();
+        if (res.statusCode === 200) {
+          setDisableOnClick(false)
+        }
+        else {
+          setDisableOnClick(false)
+
+        }
+        // console.log(res)
+      })
   }
 
 
@@ -1114,6 +1144,17 @@ const Extra = ({ onSubmit1 }) => {
         <ModalHeader toggle={() => setCompanyProfile(!companyProfile)}>Company Profile</ModalHeader>
         <ModalBody>
           <CompanyProfile toggleModal={toggleModal} />
+        </ModalBody>
+      </Modal>
+      {/* Extra Modal */}
+      <Modal isOpen={extraMod} toggle={() => setExtraMod(!extraMod)} className="modal-lg"            >
+        <ModalHeader toggle={() => setExtraMod(!extraMod)} className="modal-lg">
+          Modify Extras
+        </ModalHeader>
+        <ModalBody className="modal-lg">
+          <ExtraModification toggleModal={toggleModal4} eta={data?.eta || '15:00'}
+            etd={data?.etd || '12:00'} />
+
         </ModalBody>
       </Modal>
 
@@ -1267,7 +1308,7 @@ const Extra = ({ onSubmit1 }) => {
 
 
               {/* Extra options */}
-              <Col md='4' sm='8'>
+              {/* <Col md='4' sm='8'>
                 <div className='mb-1'>
                   <Label className='form-label' for='extras' >
                     Select Extra
@@ -1290,6 +1331,42 @@ const Extra = ({ onSubmit1 }) => {
                       />
                     )}
                   />
+                </div>
+              </Col> */}
+
+              <Col md='4' sm='8'>
+                <div className='mb-1'>
+                  <Label className='form-label' for='extras'>
+                    Select Extra
+                  </Label>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {extraData && console.log(extraData, extraData?.extraDescription?.join(', '))}
+                    <Input key={extraData?.extraDescription} // forces refresh
+                      type="textarea" name='extras' placeholder='Select extras'
+                      // value={
+                      //   extraData?.map(item => item.description).join(', ') || ''
+                      // } 
+                      value={
+                        extraData?.map(item => `• ${item.description}`).join('\n') || ''
+                      }
+                      onClick={() => setExtraMod(!extraMod)}
+                    />
+                    <span
+                      style={{
+                        color: 'red',
+                        cursor: 'pointer',
+                        border: 'none',
+                        background: 'none',
+                        padding: '0',
+                        fontSize: 'inherit',
+                        marginLeft: '5px',
+                      }}
+                      size="sm"
+                    // onClick={handleAgentClear}
+                    >
+                      X
+                    </span>
+                  </div>
                 </div>
               </Col>
 
@@ -1733,7 +1810,7 @@ const Extra = ({ onSubmit1 }) => {
                 <Button className='me-1' outline color='secondary' type='reset' onClick={handleReset}>
                   Reset
                 </Button>
-                <Button className='me-1' style={{ align: 'end' }} color='primary' type='submit'>
+                <Button className='me-1' style={{ align: 'end' }} color='primary' type='submit' disabled={disableOnClick}>
                   Submit
                 </Button>
               </div>
@@ -4206,6 +4283,10 @@ const AccordionUncontrolled = () => {
           </div>
         </ModalBody>
       </Modal>
+
+
+
+
     </div>
   )
 }

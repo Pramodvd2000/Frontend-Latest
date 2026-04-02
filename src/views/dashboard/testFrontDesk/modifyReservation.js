@@ -21,12 +21,16 @@ import ModifyBookingInfo from './modifyBookingInfo';
 import ModifyRateCode from './modifyRateCode';
 import RateSummary from './viewrateSummary'
 import ModifyDiscount from './modifyDiscount'
+import ModifyExtras from './extrasModification'
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 const MySwal = withReactContent(Swal);
 
-const ModifyReservation = (data1) => {
-  const [stayNotification, setStayNotification] = useState();
+const ModifyReservation = (data1, ) => {
+  
+ console.log(data1.data1);           // your existing usage
+  console.log(data1.callBackRefresh); 
+    const [stayNotification, setStayNotification] = useState();
   const [roomModification, setRoomModification] = useState();
   const [packageModification, setPackageModification] = useState();
   const [paymentMethodModification, setPaymentMethodModification] = useState();
@@ -37,8 +41,9 @@ const ModifyReservation = (data1) => {
   const [guestModification, setGuestModification] = useState();
   const [bookingInfo, setBookingInfo] = useState();
   const [rateCodes, setRateCode] = useState();
+  const [extraModification, setExtraModification] = useState();
   const gridRef = useRef()
-  
+
   const [rowData, setRowData] = useState();
   const [modifyDiscount, setModifyDiscount] = useState();
   const [rowData1, setRowData2] = useState()
@@ -76,21 +81,21 @@ const ModifyReservation = (data1) => {
 
   const [details, setDetails] = useState('')
   const [pytDetails, setPytDetails] = useState('');
-  
+
   const [ReservationAlerts, setReservationAlerts] = useState([]);
-  const [resAlert ,setResAlert]= useState(null);
-  const [disResAlert ,setdisResAlert]= useState(false);
+  const [resAlert, setResAlert] = useState(null);
+  const [disResAlert, setdisResAlert] = useState(false);
   const fetchReservationAlerts = async () => {
     try {
       const result = await fetchx(API_URL + `/getReservationAlerts?hotelID=10&reservationID=${data1.data1.id}`);
       const resp = await result.json();
       console.log(resp['data'].length)
-      if(resp['data'][0]['reservationAlert'].length !== 0){
+      if (resp['data'][0]['reservationAlert'].length !== 0) {
         setdisResAlert(true)
         setResAlert(resp['data'][0]['reservationAlert']);
         setReservationAlerts(resp['data'][0]['reservationAlert']);
       }
-      else{
+      else {
         setdisResAlert(false)
       }
     } catch (error) {
@@ -103,7 +108,7 @@ const ModifyReservation = (data1) => {
   }
 
   useEffect(() => {
-      fetchReservationAlerts();
+    fetchReservationAlerts();
 
     fetchx(API_URL + `/getMainReservationDetails?sharingID=${data1['data1']['sharingID']}`)
       .then(result => result.json())
@@ -111,7 +116,7 @@ const ModifyReservation = (data1) => {
         setRowData2(rowData2['data'])
       })
 
-    
+
     fetchx(API_URL + "/getReservationGuestDetails", {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
@@ -120,8 +125,8 @@ const ModifyReservation = (data1) => {
         reservationID: data1['data1']['id'],
       })
     })
-          .then(result => result.json())
-	  .then(rowData => {
+      .then(result => result.json())
+      .then(rowData => {
         setDetails(rowData['data'][0]);
 
         fetchx(API_URL + `/getResPaymentInformations?hotelID=1&reservationID=${data1['data1']['tempReservationID']}`)
@@ -136,31 +141,54 @@ const ModifyReservation = (data1) => {
       .catch((error) => {
         //console.log(error);
       });
-    }, [data1])
+  }, [data1])
 
+function refreshAPI(){
+ data1.callBackRefresh();
+      fetchx(API_URL + "/getReservationGuestDetails", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        hotelID: '1',
+        reservationID: data1['data1']['id'],
+      })
+    })
+      .then(result => result.json())
+      .then(rowData => {
+        setDetails(rowData['data'][0]);
 
+        fetchx(API_URL + `/getResPaymentInformations?hotelID=1&reservationID=${data1['data1']['tempReservationID']}`)
+          .then((result) => result.json())
+          .then((rowData) => {
+            setPytDetails(rowData["data"][0]);
+          })
+          .catch((error) => {
+            //console.log(error);
+          });
+      })
+}
 
   return (
     <div>
-{/* new */}
-    <div>
+      {/* new */}
+      <div>
         <Modal isOpen={disResAlert}
           toggle={() => setdisResAlert(!disResAlert)} className="modal-sm">
           <ModalHeader className="modal-lg" toggle={() => setdisResAlert(!disResAlert)} ></ModalHeader>
           <ModalBody className="pb-3 px-sm-1 mx-20">
             <div>
               {resAlert}
-           <br/>
+              <br />
               <Button
-                  color="primary"
-                  className="me-1"
-                  // className="text-center"
-                  onClick={() => {
-                    setdisResAlert(false);
-                  }}
-                >
-                  OK
-                </Button>
+                color="primary"
+                className="me-1"
+                // className="text-center"
+                onClick={() => {
+                  setdisResAlert(false);
+                }}
+              >
+                OK
+              </Button>
             </div>
           </ModalBody>
         </Modal>
@@ -221,13 +249,13 @@ const ModifyReservation = (data1) => {
         <Modal isOpen={dailyDetails} toggle={() => setDailyDetails(!dailyDetails)} className='modal-xl'>
           <ModalHeader className='modal-lg' toggle={() => setDailyDetails(!dailyDetails)}>Modify Daily Details</ModalHeader>
           <ModalBody className='pb-3 px-sm-1 mx-20'>
-         <DailyDetailsModification data1={data1} toggleModal={toggleModal}/> 
-         <ModalFooter>
-         <div className="d-flex flex-row justify-content-center">
-         {/* <Button outline className="me-1" onClick={() => setDailyDetails(false)}>
+            <DailyDetailsModification data1={data1} toggleModal={toggleModal} />
+            <ModalFooter>
+              <div className="d-flex flex-row justify-content-center">
+                {/* <Button outline className="me-1" onClick={() => setDailyDetails(false)}>
               Cancel
             </Button>        */}
-            </div>
+              </div>
             </ModalFooter>
           </ModalBody>
         </Modal>
@@ -276,6 +304,17 @@ const ModifyReservation = (data1) => {
       </div>
 
 
+     <div>
+        <Modal isOpen={extraModification} toggle={() => setExtraModification(!extraModification)} className='modal-lg'>
+          <ModalHeader className='modal-lg' toggle={() => setExtraModification(!extraModification)}> Modify Extra</ModalHeader>
+          <ModalBody className='pb-3 px-sm-1 mx-20'>
+            <ModifyExtras data1={data1} refreshAPIs={refreshAPI} />
+          </ModalBody>
+        </Modal>
+      </div>
+
+  
+
 
 
       <Card style={{ backgroundColor: '#F2E5D9' }}>
@@ -293,7 +332,7 @@ const ModifyReservation = (data1) => {
                   <div className='hoverUnderline' onClick={() => { setBookingInfo(!bookingInfo) }}>Modify Booking Information </div>
                 </Col>
                 <Col md='3' sm='12' className='mb-1'>
-                  <div className='hoverUnderline' onClick={() => { setRateSummary(!rateSummary) }}> View Rate Summary </div> 
+                  <div className='hoverUnderline' onClick={() => { setRateSummary(!rateSummary) }}> View Rate Summary </div>
                 </Col>
                 <Col md='3' sm='12' className='mb-1'>
                   <div className='hoverUnderline' onClick={() => { setGuestModification(!guestModification) }}>Modify Guest </div>
@@ -302,7 +341,7 @@ const ModifyReservation = (data1) => {
             </div>
           }
 
-{
+          {
             data1.data1['isMain'] !== 0 &&
             <div>
               <Row>
@@ -310,14 +349,14 @@ const ModifyReservation = (data1) => {
                   <div className='hoverUnderline' onClick={() => { setStayNotification(!stayNotification) }}>Modify Stay Duration</div>
                   <div className='hoverUnderline' onClick={() => { setRoomModification(!roomModification) }}>Modify Room Type  </div>
                 </Col>
-                <Col md='2' sm='12' className='mb-1'>    
-                  <div className='hoverUnderline' onClick={() =>  {data1.data1.blockCodeID=== null ? setPaymentMethodModification(!paymentMethodModification) : handleError('Since this reservation is created from group, these modification is not allowed !!') }}
+                <Col md='2' sm='12' className='mb-1'>
+                  <div className='hoverUnderline' onClick={() => { data1.data1.blockCodeID === null ? setPaymentMethodModification(!paymentMethodModification) : handleError('Since this reservation is created from group, these modification is not allowed !!') }}
                   >Modify Payment Method  </div>
-                  <div className='hoverUnderline' onClick={() => {data1.data1.blockCodeID=== null ? setDailyDetails(!dailyDetails) : handleError('Since this reservation is created from group, these modification is not allowed !!') } }>Modify Daily Details  </div>
+                  <div className='hoverUnderline' onClick={() => { data1.data1.blockCodeID === null ? setDailyDetails(!dailyDetails) : handleError('Since this reservation is created from group, these modification is not allowed !!') }}>Modify Daily Details  </div>
                 </Col>
                 <Col md='2' sm='12' className='mb-1'>
-                <div className='hoverUnderline' onClick={() => { setPickUpDropModification(!pickUpDropModification) }}>Modify PickUp Details </div>
-                <div className='hoverUnderline' onClick={() => { setDropModification(!dropModification) }}>Modify Drop Details</div>
+                  <div className='hoverUnderline' onClick={() => { setPickUpDropModification(!pickUpDropModification) }}>Modify PickUp Details </div>
+                  <div className='hoverUnderline' onClick={() => { setDropModification(!dropModification) }}>Modify Drop Details</div>
 
                 </Col>
                 <Col md='2' sm='12' className='mb-1'>
@@ -326,12 +365,16 @@ const ModifyReservation = (data1) => {
                 </Col>
                 <Col md='2' sm='12' className='mb-1'>
                   <div className='hoverUnderline' onClick={() => { setRateSummary(!rateSummary) }}> View Rate Summary </div>
-                  <div className='hoverUnderline' onClick={() => {data1.data1.blockCodeID=== null ? setPackageModification(!packageModification) : handleError('Since this reservation is created from group, these modification is not allowed !!') }  }>Modify Package </div>
+                  <div className='hoverUnderline' onClick={() => { data1.data1.blockCodeID === null ? setPackageModification(!packageModification) : handleError('Since this reservation is created from group, these modification is not allowed !!') }}>Modify Package </div>
                 </Col>
                 <Col md='2' sm='12' className='mb-1'>
-                {data1.data1['subBookingID'] === null && <div className='hoverUnderline' onClick={() => {data1.data1.blockCodeID=== null ? setModifyDiscount(!modifyDiscount) : handleError('Since this reservation is created from group, these modification is not allowed !!')   }}>
+                  {data1.data1['subBookingID'] === null && <div className='hoverUnderline' onClick={() => { data1.data1.blockCodeID === null ? setModifyDiscount(!modifyDiscount) : handleError('Since this reservation is created from group, these modification is not allowed !!') }}>
                     Modify Discount/Upsell </div>}
+
+                  <div className='hoverUnderline' onClick={() => { setExtraModification(!extraModification) }}>
+                    Modify Extras </div>
                 </Col>
+
               </Row>
             </div>
           }
@@ -349,7 +392,7 @@ const ModifyReservation = (data1) => {
                 <h3>
                   Stay Information
                 </h3>
-                Arrival  :        <b> { details && format(new Date(details['arrivalDate']), 'dd MMM  yy') + ' ' + details['ETA']}             </b> <br></br>
+                Arrival  :        <b> {details && format(new Date(details['arrivalDate']), 'dd MMM  yy') + ' ' + details['ETA']}             </b> <br></br>
                 Departure:        <b> {details && format(new Date(details['departureDate']), 'dd MMM  yy') + ' ' + ' ' + ' ' + details['ETD']}  </b> <br></br>
                 Checked in At: <b>{details && details['ATA'] ? format(new Date(details['ATA']), 'dd MMM yy HH:mm:ss') : 'NA'}</b> <br />
                 Checked out At:         <b> {details && details['ATD'] ? format(new Date(details['ATD']), 'dd MMM yy HH:mm:ss') : 'NA'}</b> <br></br>                Adults   :        <b> {details['numberOfAdults']}                              </b> <br></br>
@@ -439,10 +482,10 @@ const ModifyReservation = (data1) => {
                   Payment Information
                 </h3>
                 Payment Type:   <b> {details['paymentTypeCode']}</b><br></br>
-           {(pytDetails && pytDetails.cardHolderName)&& <div> Card Holder Name:<b> {pytDetails.cardHolderName}</b> </div> }  
-           {(pytDetails && pytDetails.cardHolderName )&& <div> Card Number:   {pytDetails.cardNumber}</div>}
-           {(pytDetails && pytDetails.cardHolderName )&& <div> Expiry Date:  {pytDetails.expiryDate}</div>}
-           {(pytDetails && pytDetails.upiID) && <div>Transaction ID: {pytDetails.upiID}</div>}
+                {(pytDetails && pytDetails.cardHolderName) && <div> Card Holder Name:<b> {pytDetails.cardHolderName}</b> </div>}
+                {(pytDetails && pytDetails.cardHolderName) && <div> Card Number:   {pytDetails.cardNumber}</div>}
+                {(pytDetails && pytDetails.cardHolderName) && <div> Expiry Date:  {pytDetails.expiryDate}</div>}
+                {(pytDetails && pytDetails.upiID) && <div>Transaction ID: {pytDetails.upiID}</div>}
               </Col>
               <Col md='3' sm='12'>
                 <h3>

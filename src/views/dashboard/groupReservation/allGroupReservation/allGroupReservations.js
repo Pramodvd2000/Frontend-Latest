@@ -38,6 +38,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress'
 import PaymentModification from './paymentModification';
 import InventoryEntryTable from './inventoryEntryTable'
+import ExtraModification from './extraModification';
 
 
 // ** Styles
@@ -111,6 +112,7 @@ const AllGroupReservations = () => {
     const [filldata, setfilldata] = useState();
     const [openReleaseInventory, setOpenReleaseInventory] = useState();
     const [tempData,setTempData] = useState(null);
+    const [extraMod, setExtraMod] = useState();
 
 
  function closeReleaseInventoryModal() {
@@ -2487,6 +2489,17 @@ const AllGroupReservations = () => {
             })
     }, [])
 
+    
+
+      const extrasModify = () => {
+        if (reservationData.status === 'Cancelled') {
+            return handleError("This operation is not allowed")
+        }
+        setExtraMod(!extraMod)
+        // setModalOpen(false)
+    }
+
+
     return (
         <div>
 
@@ -3240,6 +3253,9 @@ const AllGroupReservations = () => {
                                         {reservationData && reservationData.status === 'Definite' && <div onClick={bookingInfoModify} className="hoverUnderline" >
                                             Modify Booking information.
                                         </div>}
+                                           {reservationData && reservationData.status === 'Definite' && <div onClick={extrasModify} className="hoverUnderline" >
+                                            Modify Extras
+                                        </div>}
                                         {reservationData && reservationData.status === 'Definite' && <div onClick={() => setOpenReleaseInventory(!openReleaseInventory)} className="hoverUnderline" >
                                             Release Inventory
                                         </div>}
@@ -3285,7 +3301,9 @@ const AllGroupReservations = () => {
                                         {reservationData && reservationData.status !== 'Definite' && <div onClick={bookingInfoModify} className="hoverUnderline" >
                                             Modify Booking information.
                                         </div>}
-
+        {reservationData && reservationData.status !== 'Definite' && <div onClick={extrasModify} className="hoverUnderline" >
+                                            Modify Extras
+                                        </div>}
                                     </Col>
 
                                 </Row>
@@ -3592,6 +3610,22 @@ const AllGroupReservations = () => {
 
 
             </div>
+
+            
+  {reservationData !== "" && <Modal
+                isOpen={extraMod}
+                toggle={() => setExtraMod(!extraMod)}
+                className="modal-lg"
+            // style={{ maxWidth: '1400px', maxHeight: '60vh' }}
+            >
+                <ModalHeader toggle={() => setExtraMod(!extraMod)} className="modal-lg">
+                    Modify Extras
+                </ModalHeader>
+                <ModalBody className="modal-lg">
+                    <ExtraModification data1={reservationData} />
+
+                </ModalBody>
+            </Modal>}
 
             
             {reservationData !== "" && <Modal
