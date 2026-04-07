@@ -69,6 +69,74 @@ const Extras = ({ data1, eta, etd, toggleModal }) => {
       })
   }, [])
 
+  useEffect(() => {
+    const ExtraParams = JSON.stringify({
+      rateCodeID: sessionStorage.getItem('rateCodeCorporate'),
+      hotelID: 1
+    })
+    const fetchData = async () => {
+      try {
+        const response = await fetchx(API_URL + '/getDefaultExtras', {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: ExtraParams
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const defaultOptionsFromAPI = data['data'];
+
+            let createExtra = JSON.stringify({
+
+      extraID: data.extras.value,
+      reservationID: sessionStorage.getItem('reservationid'),
+      operation: 'Creation'
+    });
+
+    let res = fetchx(API_URL + "/addReservationExtrasByExtraID", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: createExtra,
+    })
+      .then(result => result.json())
+      .then((res) => {
+        // navigate('');
+
+        if (res.statusCode === 200) {
+          handleReset()
+          fetchx(API_URL + `/getExtraForReservationBYID?reservationID=${sessionStorage.getItem('reservationid') || null}&operation=Creation`)
+            .then(result => result.json())
+            .then(rowData => {
+              setRowData(rowData['data'])
+toggleModal(rowData['data'])
+
+            })
+
+              fetchx(API_URL + `/getExtraForReservation?reservationID=${sessionStorage.getItem('reservationid') || null}&operation=Creation`)
+      .then(result => result.json())
+      .then(resp => {
+        // //console.log(resp['data'])
+        setExtraName(resp['data'])
+        //console.log(extraName)
+      })
+            
+            setConfirmSubmit(false)
+          handleSuccess({ title: "Extra Added Successfully", text: "The extra has been added to the reservation successfully." })
+        } else {
+          console.log(res)
+          handleError(res.message)
+        }
+
+
+      });
+          
+        } else { }
+      } catch (error) { }
+    };
+
+    fetchData();
+  }, [sessionStorage.getItem('rateCodeCorporate')]);
+
 
   const handleError = (message) => {
     return MySwal.fire({

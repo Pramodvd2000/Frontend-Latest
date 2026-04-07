@@ -22,8 +22,10 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 import { useNavigate } from 'react-router-dom';
+import UnAssignRoom from '../testFrontDesk/unAssign';
+import AssignRoom from '../testFrontDesk/assignRoom';
 const id = '1';
-const SubMatrix = ({operation}) => {
+const SubMatrix = ({ operation }) => {
     console.log(operation)
     let navigate = useNavigate();
     const [rowData, setRowData] = useState();
@@ -31,6 +33,10 @@ const SubMatrix = ({operation}) => {
     const [open, setOpen] = useState(false);
     const [showSecondaryMessage, setShowSecondaryMessage] = useState(false);
     const [openConfirm, setOpenConfirm] = useState(false);
+    const [assign, setAssign] = useState(false)
+    const [filldata, setfilldata] = useState('')
+    const [unAssign, setUnAssign] = useState()
+
     const gridRef = useRef();
 
 
@@ -108,6 +114,7 @@ const SubMatrix = ({operation}) => {
 
     const cellClickedListener = useCallback(event => {
         console.log('cellClicked', event);
+
     }, []);
 
     const fetchData = () => {
@@ -116,7 +123,7 @@ const SubMatrix = ({operation}) => {
             setShowSecondaryMessage(true);
         }, 5000);
         let confirmRate = JSON.stringify({
-operation: operation
+            operation: operation
         })
         console.log(confirmRate)
         fetchx(API_URL + "/getAutoAssignRooms", {
@@ -258,11 +265,84 @@ operation: operation
             headerName: "Status",
             field: "reservationStatus",
             suppressSizeToFit: true,
-            minWidth: 110,
+            minWidth: 80,
 
         },
 
+        {
+            headerName: "Actions",
+            cellRendererFramework: (params) => (
+                <Button
+                    color="primary"
+                    style={{ width: 130 }}
+                    onClick={async () => {
+                        try {
+                            // Fetch data based on reservationID
+                            const reservationID = params.data.id;
+                            const response = await fetch(API_URL + `/getReservationForFrontDeskByResID?reservationID=${reservationID}`);
+                            const rowData = await response.json();
 
+                            // Update state with fetched data
+
+                            setfilldata(rowData.data[0]);
+                            if (rowData.data[0].room !== null) {
+                                handleError(
+                                    "Room is already assigned. Please unassign the room first"
+                                );
+                            } else {
+                                setAssign(!assign)
+                            }
+                          
+                        } catch (error) {
+                            console.error("Error fetching reservation data:", error);
+                        }
+                    }}
+                >
+                    Assign Room
+                </Button>
+            ),
+            suppressSizeToFit: true,
+            cellStyle: { textAlign: 'center' },
+            cellClass: 'vertical-center',
+            width: 140
+        },
+        {
+            headerName: "Actions",
+            cellRendererFramework: (params) => (
+                <Button
+                    color="primary"
+                    style={{ width: 154 }}
+                    onClick={async () => {
+                        try {
+                            // Fetch data based on reservationID
+                            const reservationID = params.data.id;
+                            const response = await fetch(API_URL + `/getReservationForFrontDeskByResID?reservationID=${reservationID}`);
+                            const rowData = await response.json();
+
+                            // Update state with fetched data
+
+                            setfilldata(rowData.data[0]);
+                            if (rowData.data[0].room === null) {
+                                handleError(
+                                    "Assign the room first"
+                                );
+                            } else {
+                                setUnAssign(!unAssign)
+                            }
+                        ;
+                        } catch (error) {
+                            console.error("Error fetching reservation data:", error);
+                        }
+                    }}
+                >
+                    Un-Assign Room
+                </Button>
+            ),
+            suppressSizeToFit: true,
+            cellStyle: { textAlign: 'center' },
+            cellClass: 'vertical-center',
+            width: 160
+        },
 
         {
             headerName: "R_Type/No.Rms",
@@ -343,7 +423,7 @@ operation: operation
 
         setOpen(true)
         let createExtra = JSON.stringify({
-operation: operation
+            operation: operation
 
         });
         setTimeout(() => {
@@ -375,6 +455,22 @@ operation: operation
 
 
     };
+
+
+    function toggleModal(data) {
+        if (data === 'assigned') {
+
+            setAssign(false)
+        }
+        if (data === 'unassign') {
+            setUnAssign(false)
+
+        }
+        if (data === 'assignedDuringCheckIn') {
+            setAssign(false)
+        }
+
+    }
 
 
     return (
@@ -475,6 +571,28 @@ operation: operation
                 </div>
             </Backdrop>
 
+
+            <div>
+                <Modal isOpen={assign} toggle={() => setAssign(!assign)} className='modal-xl'>
+                    <ModalHeader className='modal-xl' toggle={() => setAssign(!assign)}></ModalHeader>
+                    <ModalBody className='pb-3 px-sm-1 mx-20'>
+                        <div>
+                            {/* <AssignRoom/> */}
+                            {filldata.length != 0 && <AssignRoom data1={filldata} toggleModal={toggleModal} assignUnassign={false} />}
+                        </div>
+                    </ModalBody>
+                </Modal>
+            </div>
+            <div>
+                <Modal isOpen={unAssign} toggle={() => setUnAssign(!unAssign)} className='demo-inline-spacing'>
+                    <ModalHeader className='bg-transparent' toggle={() => setUnAssign(!unAssign)}></ModalHeader>
+                    <ModalBody className='pb-3 px-sm-1 mx-20'>
+                        <div>
+                            {filldata.length != 0 && <UnAssignRoom data1={filldata} toggleModal={toggleModal} />}
+                        </div>
+                    </ModalBody>
+                </Modal>
+            </div>
         </div>
     );
 }
