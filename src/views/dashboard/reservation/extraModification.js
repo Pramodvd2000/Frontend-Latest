@@ -39,12 +39,13 @@ const defaultValues = {
 };
 
 const Extras = ({ data1, eta, etd, toggleModal }) => {
-  console.log(data1,  eta, etd)
+  console.log(data1, eta, etd)
   const [open, setOpen] = useState('')
   const toggle = id => { open === id ? setOpen() : setOpen(id) }
   let navigate = useNavigate();
   const [selectedValue, setSelectedOption] = useState('');
   const [rowData, setRowData] = useState();
+  const [rowData2, setRowData2] = useState();
   const [extraData, setExtraData] = useState();
   const gridRef = useRef();
   const [show, actionButton] = useState(false);
@@ -55,9 +56,14 @@ const Extras = ({ data1, eta, etd, toggleModal }) => {
   const [extraName, setExtraName] = useState([])
   const [confirmSubmit, setConfirmSubmit] = useState(false)
   const [confirmRemove, setCofirmRemove] = useState(false)
-    const [tempReservationData, setTempReservationData] = useState([]);
-    const [tempReservationModal, setTempReservationModal] = useState(false);
-    const [selectedReservations, setSelectedReservations] = useState([]);
+  const [tempReservationData, setTempReservationData] = useState([]);
+  const [tempReservationModal, setTempReservationModal] = useState(false);
+  const [selectedReservations, setSelectedReservations] = useState([]);
+  const [groupExtraName, setGroupExtraName] = useState()
+  const [extraGroupConfirmSubmit, setGroupExtraConfirmSubmit] = useState(false)
+  const [extraGroupData, setExtraGroupData] = useState()
+  const [extraGroupconfirmSubmit, setExtraGroupConfirmSubmit] = useState(false)
+  const [selectedGroup, setSelectedGroup] = useState(null);
 
   useEffect(() => {
     fetchx(API_URL + `/getExtraForReservation?reservationID=${sessionStorage.getItem('reservationid') || null}&operation=Creation`)
@@ -65,6 +71,13 @@ const Extras = ({ data1, eta, etd, toggleModal }) => {
       .then(resp => {
         // //console.log(resp['data'])
         setExtraName(resp['data'])
+        //console.log(extraName)
+      })
+    fetchx(API_URL + `/getGroupExtra`)
+      .then(result => result.json())
+      .then(resp => {
+        // //console.log(resp['data'])
+        setGroupExtraName(resp['data'])
         //console.log(extraName)
       })
   }, [])
@@ -86,50 +99,36 @@ const Extras = ({ data1, eta, etd, toggleModal }) => {
           const data = await response.json();
           const defaultOptionsFromAPI = data['data'];
 
+          for (let i = 0; i < defaultOptionsFromAPI.length; i++) {
             let createExtra = JSON.stringify({
 
-      extraID: data.extras.value,
-      reservationID: sessionStorage.getItem('reservationid'),
-      operation: 'Creation'
-    });
+              extraID: defaultOptionsFromAPI[i].value,
+              reservationID: sessionStorage.getItem('reservationid'),
+              operation: 'Creation'
+            });
 
-    let res = fetchx(API_URL + "/addReservationExtrasByExtraID", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: createExtra,
-    })
-      .then(result => result.json())
-      .then((res) => {
-        // navigate('');
-
-        if (res.statusCode === 200) {
-          handleReset()
-          fetchx(API_URL + `/getExtraForReservationBYID?reservationID=${sessionStorage.getItem('reservationid') || null}&operation=Creation`)
-            .then(result => result.json())
-            .then(rowData => {
-              setRowData(rowData['data'])
-toggleModal(rowData['data'])
-
+            let res = fetchx(API_URL + "/addReservationExtrasByExtraID", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: createExtra,
             })
+              .then(result => result.json())
+              .then((res) => {
+                // navigate('');
 
-              fetchx(API_URL + `/getExtraForReservation?reservationID=${sessionStorage.getItem('reservationid') || null}&operation=Creation`)
-      .then(result => result.json())
-      .then(resp => {
-        // //console.log(resp['data'])
-        setExtraName(resp['data'])
-        //console.log(extraName)
-      })
-            
-            setConfirmSubmit(false)
-          handleSuccess({ title: "Extra Added Successfully", text: "The extra has been added to the reservation successfully." })
-        } else {
-          console.log(res)
-          handleError(res.message)
-        }
+                if (res.statusCode === 200) {
+
+                  console
+                  handleSuccess({ title: "Extra Added Successfully", text: "The extra has been added to the reservation successfully." })
+                } else {
+                  console.log(res)
+                  handleError(res.message)
+                }
 
 
-      });
-          
+              });
+          }
+
         } else { }
       } catch (error) { }
     };
@@ -178,72 +177,81 @@ toggleModal(rowData['data'])
 
   ]);
 
-    const tempReservationColumnDefs = [
-      {
-        headerCheckboxSelection: true,
-        checkboxSelection: true,
-        width: 50,
-        suppressMenu: true,
-        resizable: false,
+
+
+  const [columnDefs2, setColumnDefs2] = useState([
+    { headerName: 'Extra Code', field: 'extraCode', suppressSizeToFit: true, maxWidth: 140 },
+    { headerName: 'Description', field: 'description', width: 380 },
+    // { headerName: 'Type', field: 'type', suppressSizeToFit: true,  maxWidth: 140 },
+
+  ]);
+
+  const tempReservationColumnDefs = [
+    {
+      headerCheckboxSelection: true,
+      checkboxSelection: true,
+      width: 50,
+      suppressMenu: true,
+      resizable: false,
+    },
+    {
+      headerName: "Guest Name",
+      field: "fullName",
+      maxWidth: 150,
+      autoHeaderHeight: true,
+      wrapHeaderText: true,
+    },
+    {
+      headerName: "Booking ID",
+      field: "bookingID",
+      maxWidth: 130,
+      autoHeaderHeight: true,
+      wrapHeaderText: true,
+    },
+    {
+      headerName: "Sharing ID",
+      field: "sharingID",
+      maxWidth: 130,
+      autoHeaderHeight: true,
+      wrapHeaderText: true,
+    },
+
+    {
+      headerName: "Arrival Date",
+      field: "arrivalDate",
+      maxWidth: 140,
+      autoHeaderHeight: true,
+      wrapHeaderText: true,
+      cellRenderer: (params) => {
+        if (params.data && params.data.arrivalDate) {
+          const formattedDate = Moment(params.data.arrivalDate).format(
+            "DD-MM-YYYY"
+          );
+          return formattedDate;
+        } else {
+          return "";
+        }
       },
-      {
-        headerName: "Guest Name",
-        field: "fullName",
-        maxWidth: 150,
-        autoHeaderHeight: true,
-        wrapHeaderText: true,
+    },
+    {
+      headerName: "Departure Date",
+      field: "departureDate",
+      suppressSizeToFit: true,
+      maxWidth: 140,
+      autoHeaderHeight: true,
+      wrapHeaderText: true,
+      cellRenderer: (params) => {
+        if (params.data && params.data.departureDate) {
+          const formattedDate = Moment(params.data.departureDate).format(
+            "DD-MM-YYYY"
+          );
+          return formattedDate;
+        } else {
+          return "";
+        }
       },
-      {
-        headerName: "Booking ID",
-        field: "bookingID",
-        maxWidth: 130,
-        autoHeaderHeight: true,
-        wrapHeaderText: true,
-      },
-      {
-        headerName: "Sharing ID",
-        field: "sharingID",
-        maxWidth: 130,
-        autoHeaderHeight: true,
-        wrapHeaderText: true,
-      },
-  
-      {
-        headerName: "Arrival Date",
-        field: "arrivalDate",
-        maxWidth: 140,
-        autoHeaderHeight: true,
-        wrapHeaderText: true,
-        cellRenderer: (params) => {
-          if (params.data && params.data.arrivalDate) {
-            const formattedDate = Moment(params.data.arrivalDate).format(
-              "DD-MM-YYYY"
-            );
-            return formattedDate;
-          } else {
-            return "";
-          }
-        },
-      },
-      {
-        headerName: "Departure Date",
-        field: "departureDate",
-        suppressSizeToFit: true,
-        maxWidth: 140,
-        autoHeaderHeight: true,
-        wrapHeaderText: true,
-        cellRenderer: (params) => {
-          if (params.data && params.data.departureDate) {
-            const formattedDate = Moment(params.data.departureDate).format(
-              "DD-MM-YYYY"
-            );
-            return formattedDate;
-          } else {
-            return "";
-          }
-        },
-      },
-    ];
+    },
+  ];
 
 
   const defaultColDef = useMemo(() => (
@@ -269,81 +277,81 @@ toggleModal(rowData['data'])
       .then(result => result.json())
       .then(rowData => {
         setRowData(rowData['data'])
-toggleModal(rowData['data'])
+        toggleModal(rowData['data'])
 
       })
   }, []);
 
-toggleModal(rowData)
+  toggleModal(rowData)
 
-      const toggleTempReservationModal = () => {
+  const toggleTempReservationModal = () => {
     setTempReservationModal(prev => !prev);
-    
+
     // Reset selectedReservations when closing the modal
     if (tempReservationModal) {
       setSelectedReservations([]);
     }
   };
 
- const handleUpdateRates = async () => {
-        // Check if any reservations are selected
-        if (selectedReservations.length === 0) {
-          Swal.fire({
-            title: "Error",
-            text: "Please select at least one reservation",
-            icon: "error",
-          });
-          return;
-        }
-      
-        try {
+  const handleUpdateRates = async () => {
+    // Check if any reservations are selected
+    if (selectedReservations.length === 0) {
+      Swal.fire({
+        title: "Error",
+        text: "Please select at least one reservation",
+        icon: "error",
+      });
+      return;
+    }
 
-          const sharingIDs = selectedReservations.map(reservation => reservation.sharingID);
-          const reservationIDs =  selectedReservations.map(reservation => reservation.id);
-      
-          const requestBody = {
-            reservationIDs:reservationIDs,
-            sharingIDs: sharingIDs,
-            reservationID: data1.id
-          };
-      
-          const response = await fetch(`${API_URL}/modifyBookingInfoOfGroupReservations`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody)
-          });
-      
-          const result = await response.json();
-      
-          if (result.statusCode === 200) {
-            Swal.fire({
-              title: "Success",
-              text: result.message || "Reservations updated successfully",
-              icon: "success",
-            });
-      
-            // Close the modal
-            setTempReservationModal(false);
-          } else {
-            Swal.fire({
-              title: "Error",
-              text: result.message || "Failed to update reservations",
-              icon: "error",
-            });
-          }
-        } catch (error) {
-          console.error("Error updating reservations:", error);
-          Swal.fire({
-            title: "Error",
-            text: "An unexpected error occurred",
-            icon: "error",
-          });
-        }
+    try {
+
+      const sharingIDs = selectedReservations.map(reservation => reservation.sharingID);
+      const reservationIDs = selectedReservations.map(reservation => reservation.id);
+
+      const requestBody = {
+        reservationIDs: reservationIDs,
+        sharingIDs: sharingIDs,
+        reservationID: data1.id
       };
 
-      
+      const response = await fetch(`${API_URL}/modifyBookingInfoOfGroupReservations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      const result = await response.json();
+
+      if (result.statusCode === 200) {
+        Swal.fire({
+          title: "Success",
+          text: result.message || "Reservations updated successfully",
+          icon: "success",
+        });
+
+        // Close the modal
+        setTempReservationModal(false);
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: result.message || "Failed to update reservations",
+          icon: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating reservations:", error);
+      Swal.fire({
+        title: "Error",
+        text: "An unexpected error occurred",
+        icon: "error",
+      });
+    }
+  };
+
+
   const onSubmit = (data) => {
 
     setData(data);
@@ -370,19 +378,19 @@ toggleModal(rowData)
             .then(result => result.json())
             .then(rowData => {
               setRowData(rowData['data'])
-toggleModal(rowData['data'])
+              toggleModal(rowData['data'])
 
             })
 
-              fetchx(API_URL + `/getExtraForReservation?reservationID=${sessionStorage.getItem('reservationid') || null}&operation=Creation`)
-      .then(result => result.json())
-      .then(resp => {
-        // //console.log(resp['data'])
-        setExtraName(resp['data'])
-        //console.log(extraName)
-      })
-            
-            setConfirmSubmit(false)
+          fetchx(API_URL + `/getExtraForReservation?reservationID=${sessionStorage.getItem('reservationid') || null}&operation=Creation`)
+            .then(result => result.json())
+            .then(resp => {
+              // //console.log(resp['data'])
+              setExtraName(resp['data'])
+              //console.log(extraName)
+            })
+
+          setConfirmSubmit(false)
           handleSuccess({ title: "Extra Added Successfully", text: "The extra has been added to the reservation successfully." })
         } else {
           console.log(res)
@@ -396,7 +404,7 @@ toggleModal(rowData['data'])
   };
 
 
-   const handleRemoveExtra = (data) => {
+  const handleRemoveExtra = (data) => {
 
     setData(data);
     let createExtra = JSON.stringify({
@@ -420,17 +428,17 @@ toggleModal(rowData['data'])
             .then(result => result.json())
             .then(rowData => {
               setRowData(rowData['data'])
-toggleModal(rowData['data'])
+              toggleModal(rowData['data'])
 
             })
-             fetchx(API_URL + `/getExtraForReservation?reservationID=${sessionStorage.getItem('reservationid') || null}&operation=Creation`)
-      .then(result => result.json())
-      .then(resp => {
-        // //console.log(resp['data'])
-        setExtraName(resp['data'])
-        //console.log(extraName)
-      })
-            setCofirmRemove(false)
+          fetchx(API_URL + `/getExtraForReservation?reservationID=${sessionStorage.getItem('reservationid') || null}&operation=Creation`)
+            .then(result => result.json())
+            .then(resp => {
+              // //console.log(resp['data'])
+              setExtraName(resp['data'])
+              //console.log(extraName)
+            })
+          setCofirmRemove(false)
           handleSuccess({ title: "Extra Added Successfully", text: "The extra has been added to the reservation successfully." })
         } else {
           console.log(res)
@@ -454,8 +462,84 @@ toggleModal(rowData['data'])
 
       extras: null
     });
+     setSelectedGroup(null);
+
   };
 
+
+  function handleGroupAdd(group) {
+
+    setExtraGroupData(group)
+    let createExtra = JSON.stringify({
+
+      extraGroupID: group.id,
+
+    });
+
+    let res = fetchx(API_URL + "/getGroupExtraByID", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: createExtra,
+    })
+      .then(result => result.json())
+      .then((res) => {
+        if (res.statusCode === 200) {
+          setRowData2(res.data)
+        }
+      }
+      );
+    console.log(group)
+    setGroupExtraConfirmSubmit(true)
+  }
+
+  function handleGroupAddFinal() {
+
+    let group = extraGroupData
+    console.log(group)
+    let createExtra = JSON.stringify({
+
+      extraGroupID: group.id,
+      reservationID: sessionStorage.getItem('reservationid'),
+      operation: 'CreationByGroupExtra',
+    });
+
+    let res = fetchx(API_URL + "/updateGroupExtraForReservation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: createExtra,
+    })
+      .then(result => result.json())
+      .then((res) => {
+        // navigate('');
+
+        if (res.statusCode === 200) {
+    setGroupExtraConfirmSubmit(false)
+
+          handleReset()
+          fetchx(API_URL + `/getExtraForReservationBYID?reservationID=${sessionStorage.getItem('reservationid') || null}&operation=Creation`)
+            .then(result => result.json())
+            .then(rowData => {
+              setRowData(rowData['data'])
+              toggleModal(rowData['data'])
+
+            })
+
+          fetchx(API_URL + `/getExtraForReservation?reservationID=${sessionStorage.getItem('reservationid') || null}&operation=Creation`)
+            .then(result => result.json())
+            .then(resp => {
+              // //console.log(resp['data'])
+              setExtraName(resp['data'])
+              //console.log(extraName)
+            })
+
+          setConfirmSubmit(false)
+          handleSuccess({ title: "Extra Added Successfully", text: "The extra has been added to the reservation successfully." })
+        } else {
+          console.log(res)
+          handleError(res.message)
+        }
+      });
+  }
   return (
     <div>
 
@@ -465,7 +549,7 @@ toggleModal(rowData['data'])
           <CardHeader>
             <CardTitle tag="h4">Extras</CardTitle>
           </CardHeader>
-     
+
           <CardBody>
             <Form onSubmit={handleSubmit(onSubmit)}>
               <Row>
@@ -506,8 +590,64 @@ toggleModal(rowData['data'])
                     />
                   </div>
                 </Col>
+                <Col md="1" className="text-center">
+                  <Label style={{ marginTop: '30px' }}>OR</Label>
+                </Col>
 
+                {/* Group Buttons
+                <Col md="7">
+                  <div style={{ marginTop: '10px' }}>
 
+                    <Label style={{ fontWeight: '600', fontSize: '14px' }}>
+                      Extra Group
+                    </Label>
+
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
+                      {groupExtraName && groupExtraName.map((group, index) => (
+                        <Button
+                          key={index}
+                          color="primary"
+                          outline
+                          onClick={() =>
+                            // setGroupExtraConfirmSubmit(true)
+
+                            handleGroupAdd(group)
+                          }
+                        >
+                          {group.extraGroupName}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </Col> */}
+
+                <Col md='4' sm='8'>
+  <div style={{ marginTop: 'px' }}>
+
+    <Label className="form-label">
+      Extra Group
+    </Label>
+
+    <Select
+      isClearable
+      placeholder="Select Extra Group"
+      classNamePrefix="select"
+      theme={selectThemeColors}
+       value={selectedGroup} 
+      options={groupExtraName?.map(group => ({
+        label: group.extraGroupName,
+        value: group
+      }))}
+      onChange={(selected) => {
+            setSelectedGroup(selected);
+
+        if (selected) {
+          handleGroupAdd(selected.value); // pass full group object
+        }
+      }}
+    />
+  </div>
+</Col>
 
                 <div className="d-flex">
                   <Button className="me-1" color="primary" onClick={handleSubmit(() => setConfirmSubmit(true))}>
@@ -545,6 +685,60 @@ toggleModal(rowData['data'])
         />
       </div>
 
+
+      <Modal isOpen={extraGroupConfirmSubmit} toggle={() => setGroupExtraConfirmSubmit(!extraGroupConfirmSubmit)} className='modal-lg'>
+        `        <ModalHeader className='bg-transparent' toggle={() => setGroupExtraConfirmSubmit(!extraGroupConfirmSubmit)}>Extra Group: <span className="text-primary ms-1 fw-bold">{extraGroupData?.extraGroupName}</span></ModalHeader>
+        `        <ModalBody className='text-center mb-2'>
+
+          <div className='text-center mb-2'>
+            <div className="ag-theme-alpine" style={{ height: 540 }}>
+              <AgGridReact
+                ref={gridRef}
+                rowData={rowData2} columnDefs={columnDefs2}
+                animateRows={true} rowSelection='multiple'
+                // onCellClicked={cellClickedListener}
+                paginationPageSize='10'
+                pagination='true'
+                defaultColDef={defaultColDef}
+                headerColor="ddw-primary"
+
+              />
+            </div>
+           <div className="button-container d-flex justify-content-start gap-1 mt-2">
+  <Button color="primary" onClick={handleGroupAddFinal}>
+    Confirm
+  </Button>
+
+  <Button color="secondary" onClick={() => setGroupExtraConfirmSubmit(false)}>
+    Back
+  </Button>
+</div>
+
+          </div>
+        </ModalBody>
+      </Modal>
+
+      <Modal isOpen={extraGroupconfirmSubmit} toggle={() => setExtraGroupConfirmSubmit(!extraGroupconfirmSubmit)} className='modal-dialog-centered'>
+        <ModalHeader className='bg-transparent' toggle={() => setExtraGroupConfirmSubmit(!extraGroupconfirmSubmit)}></ModalHeader>
+        <ModalBody className='text-center mb-2'>
+
+          <div className='text-center mb-2'>
+            <h5><b>"Do You Want Add Extra By {extraGroupData?.extraGroupName} Group ?"</b></h5>
+
+            <div className="button-container text-center">
+              <Button className="me-1" color="primary" onClick={handleSubmit(onSubmit)}>
+                Confirm
+              </Button>
+              <Button className="me-1" color="primary" onClick={() => setExtraGroupConfirmSubmit(false)}>
+                Back
+              </Button>
+
+            </div>
+
+          </div>
+        </ModalBody>
+      </Modal>
+
       <Modal isOpen={confirmSubmit} toggle={() => setConfirmSubmit(!confirmSubmit)} className='modal-dialog-centered'>
         <ModalHeader className='bg-transparent' toggle={() => setConfirmSubmit(!confirmSubmit)}></ModalHeader>
         <ModalBody className='text-center mb-2'>
@@ -566,7 +760,7 @@ toggleModal(rowData['data'])
         </ModalBody>
       </Modal>
 
-        <Modal isOpen={confirmRemove} toggle={() => setCofirmRemove(!confirmRemove)} className='modal-dialog-centered'>
+      <Modal isOpen={confirmRemove} toggle={() => setCofirmRemove(!confirmRemove)} className='modal-dialog-centered'>
         <ModalHeader className='bg-transparent' toggle={() => setCofirmRemove(!confirmRemove)}></ModalHeader>
         <ModalBody className='text-center mb-2'>
 
@@ -588,17 +782,18 @@ toggleModal(rowData['data'])
       </Modal>
 
 
-        
-          {/* Temporary Reservations Modal */}
+
+
+      {/* Temporary Reservations Modal */}
       <Modal
         isOpen={tempReservationModal}
         //toggle={() => setTempReservationModal(!tempReservationModal)}
         toggle={toggleTempReservationModal}
         className="modal-dialog-centered modal-lg"
-        // style={{ maxWidth: '700px', width: '700px', margin: 'auto' }}
+      // style={{ maxWidth: '700px', width: '700px', margin: 'auto' }}
       >
         <ModalHeader
-         toggle={toggleTempReservationModal}
+          toggle={toggleTempReservationModal}
         >
           Select Reservations
         </ModalHeader>
@@ -625,13 +820,13 @@ toggleModal(rowData['data'])
               marginTop: "10px",
             }}
           >
-            <Button 
-                color="primary" 
-                onClick={handleUpdateRates}
-                disabled={selectedReservations.length === 0}
-                >
-                Update
-                </Button>
+            <Button
+              color="primary"
+              onClick={handleUpdateRates}
+              disabled={selectedReservations.length === 0}
+            >
+              Update
+            </Button>
           </div>
         </ModalBody>
       </Modal>

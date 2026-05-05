@@ -2100,6 +2100,19 @@ const AllGroupReservations = () => {
     };
 
 
+      function refreshAPI() {
+        fetchx(API_URL + "/getGroupReservationBasedOnID", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reservationID: sessionStorage.getItem('groupReservationID') })
+        }).then(result => result.json())
+            .then(rowData => {
+                setReservationData(rowData["data"])
+            })
+
+    }
+
+    
     // File upload option for room number assignment
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -3622,7 +3635,7 @@ const AllGroupReservations = () => {
                     Modify Extras
                 </ModalHeader>
                 <ModalBody className="modal-lg">
-                    <ExtraModification data1={reservationData} />
+                    <ExtraModification data1={reservationData} refreshAPI={refreshAPI}/>
 
                 </ModalBody>
             </Modal>}

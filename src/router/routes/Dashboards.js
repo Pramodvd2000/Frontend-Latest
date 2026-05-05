@@ -261,10 +261,15 @@ const RoomTypeWiseDetails = lazy(() =>  import("../../views/dashboard/BookingEng
 const RoomAmeneties = lazy(() =>  import("../../views/dashboard/BookingEngineConfig/roomAmeneties"));
 const RoomDetails = lazy(() =>  import("../../views/dashboard/BookingEngineConfig/roomDetails"));
 const RoomTypeImages = lazy(() =>  import("../../views/dashboard/BookingEngineConfig/roomTypeImages"));
+const RateCodeDiscount = lazy(() =>  import("../../views/dashboard/mobileAppConfig/rateCodeDiscount"));
 const DashboardAutoAssignRooms = lazy(() =>  import("../../views/dashboard/autoAssignRooms"));
 
 const DashboardRoutes = [
   {
+    path: '/dashboard/mobileAppConfig/rateCodeDiscount',
+    element: <RateCodeDiscount />
+  },
+    {
     path: '/dashboard/BookingEngineConfig/roomTypeWiseDetails',
     element: <RoomTypeWiseDetails />
   },

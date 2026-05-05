@@ -807,65 +807,133 @@ const Extra = ({ onSubmit1 }) => {
     fetchData();
   }, [sessionStorage.getItem('rateCodeCorporate')]);
 
-  useEffect(() => {
-    const ExtraParams = JSON.stringify({
-      rateCodeID: sessionStorage.getItem('rateCodeCorporate'),
-      hotelID: 1
-    })
-    const fetchData = async () => {
-      try {
-        const response = await fetchx(API_URL + '/getDefaultExtras', {
-          method: "POST",
-          headers: { 'Content-Type': 'application/json' },
-          body: ExtraParams
-        });
 
-        if (response.ok) {
-          const data = await response.json();
-          const defaultOptionsFromAPI = data['data'];
-    setExtraData(defaultOptionsFromAPI.map(item => ({
-    ...item,
-    description: item.label,
-    extraDescription: item.value
-  })))
 
-          for (let i = 0; i < defaultOptionsFromAPI.length; i++) {
-            let createExtra = JSON.stringify({
 
-      extraID: defaultOptionsFromAPI[i].value,
-      reservationID: sessionStorage.getItem('reservationid'),
-      operation: 'Creation'
-    });
 
-    let res = fetchx(API_URL + "/addReservationExtrasByExtraID", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: createExtra,
-    })
-      .then(result => result.json())
-      .then((res) => {
-        // navigate('');
 
-        if (res.statusCode === 200) {
+  // useEffect(() => {
+  //   const ExtraParams = JSON.stringify({
+  //     rateCodeID: sessionStorage.getItem('rateCodeCorporate'),
+  //     hotelID: 1
+  //   })
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetchx(API_URL + '/getDefaultExtras', {
+  //         method: "POST",
+  //         headers: { 'Content-Type': 'application/json' },
+  //         body: ExtraParams
+  //       });
+
+  //       if (response.ok) {
+  //         const data = await response.json();
+  //         const defaultOptionsFromAPI = data['data'];
+  //   setExtraData(defaultOptionsFromAPI.map(item => ({
+  //   ...item,
+  //   description: item.label,
+  //   extraDescription: item.value
+  // })))
+
+  //         for (let i = 0; i < defaultOptionsFromAPI.length; i++) {
+  //           console.log("defaultOptionsFromAPI", defaultOptionsFromAPI[i],defaultOptionsFromAPI[i].value)
+
+  //           let createExtra = JSON.stringify({
+  //     extraID: defaultOptionsFromAPI[i].value,
+  //     reservationID: sessionStorage.getItem('reservationid'),
+  //     operation: 'Creation'
+  //   });
+
+  //   let res = fetchx(API_URL + "/addReservationExtrasByExtraID", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: createExtra,
+  //   })
+  //     .then(result => result.json())
+  //     .then((res) => {
+  //       // navigate('');
+
+  //       if (res.statusCode === 200) {
        
-            console
-          handleSuccess({ title: "Extra Added Successfully", text: "The extra has been added to the reservation successfully." })
-        } else {
-          console.log(res)
-          handleError(res.message)
+  //         //   console
+  //         // handleSuccess({ title: "Extra Added Successfully", text: "The extra has been added to the reservation successfully." })
+  //       } else {
+  //         console.log(res)
+  //         // handleError(res.message)
+  //       }
+
+
+  //     });
+  //   }
+          
+  //       } else { }
+  //     } catch (error) { }
+  //   };
+
+  //   fetchData();
+  // }, [sessionStorage.getItem('rateCodeCorporate')]);
+
+
+
+
+useEffect(() => {
+  const ExtraParams = JSON.stringify({
+    rateCodeID: sessionStorage.getItem('rateCodeCorporate'),
+    hotelID: 1
+  });
+
+  const fetchData = async () => {
+    try {
+      const response = await fetchx(API_URL + '/getDefaultExtras', {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: ExtraParams
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const defaultOptionsFromAPI = data['data'];
+
+        setExtraData(defaultOptionsFromAPI.map(item => ({
+          ...item,
+          description: item.label,
+          extraDescription: item.value
+        })));
+
+        // 🔹 Use for...of and await to process sequentially
+        for (const item of defaultOptionsFromAPI) {
+          console.log("defaultOptionsFromAPI", item, item.value);
+
+          const createExtra = JSON.stringify({
+            extraID: item.value,
+            reservationID: sessionStorage.getItem('reservationid'),
+            operation: 'Creation'
+          });
+
+          const res = await fetchx(API_URL + "/addReservationExtrasByExtraID", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: createExtra,
+          }).then(r => r.json());
+
+          if (res.statusCode === 200) {
+            console.log(`Extra ${item.value} added successfully`);
+          } else {
+            console.error(`Error adding extra ${item.value}`, res);
+          }
         }
 
-
-      });
+      } else {
+        console.error("Failed to fetch default extras");
+      }
+    } catch (error) {
+      console.error("Error fetching extras:", error);
     }
-          
-        } else { }
-      } catch (error) { }
-    };
+  };
 
-    fetchData();
-  }, [sessionStorage.getItem('rateCodeCorporate')]);
+  fetchData();
+}, [sessionStorage.getItem('rateCodeCorporate')]);
 
+  
   //API to get company list
   useEffect(() => {
 

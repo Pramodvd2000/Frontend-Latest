@@ -43,6 +43,12 @@ export default [
         icon: <Circle size={12} />,
         navLink: '/apps/configuration/industry'
       },
+       {
+        id: 'extraGroup',
+        title: 'Extra Groups',
+        icon: <Circle size={12} />,
+        navLink: '/apps/configuration/extraGroup'
+      },
       {
         id: 'roomStatus',
         title: 'Room Management',

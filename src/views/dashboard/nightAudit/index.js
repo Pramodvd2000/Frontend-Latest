@@ -949,6 +949,14 @@ const PillFilled = () => {
             body: getDailyDetails
         }).then(result => result.json())
             .then(rowData => {
+                if(rowData.statusCode === 200){
+                    console.log('added to night audit')
+                    setActive('4')
+                    setStartNightAudit(true)
+                }   
+                else{
+                    handleError(rowData.message)
+                }
                 console.log(rowData)
             })
     }
@@ -2929,7 +2937,7 @@ const PillFilled = () => {
                         </ModalBody>
                         <ModalFooter className="justify-content-center">
                             {/* <Button color="primary" onClick={() => (setStartNightAudit(true), setActive('1'), AddToNightAudit())}> */}
-                            <Button color="primary" onClick={() => (setStartNightAudit(true), setActive('4'), AddToNightAudit())}>
+                            <Button color="primary" onClick={() => ( AddToNightAudit())}>
                                 Confirm
                             </Button>
                             <Button color="secondary" onClick={() => setModalOpen(!modalOpen)}>

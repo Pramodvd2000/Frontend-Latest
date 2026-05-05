@@ -86,8 +86,8 @@ const AllDefiniteReservations = () => {
     const [bookingInfoMod, setBookingInfoMod] = useState();
     const [extraMod, setExtraMod] = useState();
 
-    const [modificationLogs,setModificationLogs] = useState();
-    const [groupInfoMod, setGroupInfoMod ] = useState(false);
+    const [modificationLogs, setModificationLogs] = useState();
+    const [groupInfoMod, setGroupInfoMod] = useState(false);
     const [numberOfRooms, setNumberOfRooms] = useState();
     const [cancelBooking, setCancelBooking] = useState();
     const [reason, setReason] = useState([]);
@@ -102,9 +102,9 @@ const AllDefiniteReservations = () => {
     const [groupRevenueData, setGroupRevenueData] = useState([])
     const [openCheckInForm, setOpenCheckInForm] = useState(false)
     const [sharerForm, setSharerForm] = useState(false)
-    const [instructionForm,setInstructionForm] = useState(false)
+    const [instructionForm, setInstructionForm] = useState(false)
     const [sharerData, setSharerData] = useState(false)
-    const [bookingInformationData, setBookingInformationData ] = useState()
+    const [bookingInformationData, setBookingInformationData] = useState()
     const [checkInData, setCheckInData] = useState()
     const [uploadForm, setUploadForm] = useState(false);
     const [fileData, setFileData] = useState(null);
@@ -129,42 +129,42 @@ const AllDefiniteReservations = () => {
     const [selectedReservationID, setSelectedReservationID] = useState();
     console.log(reservationData)
     const [isUpdateWithRatesButton, setIsUpdateWithRatesButton] = useState(false);
-     const [selectedCompanyId, setSelectedCompanyId] = useState(null);
-   const [newReservationModal, setNewReservationModal] = useState(false);
+    const [selectedCompanyId, setSelectedCompanyId] = useState(null);
+    const [newReservationModal, setNewReservationModal] = useState(false);
     const [openCancelIndividualBooking, setOpenCancelIndividualBooking] = useState(null);
-    function closeInventoryModal(){
+    function closeInventoryModal() {
         setInvOpen(!invOpen)
-                }
-function closeReleaseInventoryModal() {
+    }
+    function closeReleaseInventoryModal() {
         setOpenReleaseInventory(!openReleaseInventory)
     }
 
- useEffect(() => {
-    if (!selectedReservationID || !uploadForm) return;
-  
-    const fetchGroupReservationData = async () => {
-      try {
-        const response = await fetch(API_URL + "/getGroupResData", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ groupReservationID: selectedReservationID }),
-        });
-  
-        const result = await response.json();
-        if (response.ok && result.status === "success") {
-          setTempData(result.data);
-          console.log(result.data);
-        } else {
-          console.error(result.message || "Failed to fetch data");
-        }
-      } catch (error) {
-        console.error("Error fetching group reservation data:", error);
-      }
-    };
-  
-    fetchGroupReservationData();
-  }, [selectedReservationID, uploadForm]);
-  
+    useEffect(() => {
+        if (!selectedReservationID || !uploadForm) return;
+
+        const fetchGroupReservationData = async () => {
+            try {
+                const response = await fetch(API_URL + "/getGroupResData", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ groupReservationID: selectedReservationID }),
+                });
+
+                const result = await response.json();
+                if (response.ok && result.status === "success") {
+                    setTempData(result.data);
+                    console.log(result.data);
+                } else {
+                    console.error(result.message || "Failed to fetch data");
+                }
+            } catch (error) {
+                console.error("Error fetching group reservation data:", error);
+            }
+        };
+
+        fetchGroupReservationData();
+    }, [selectedReservationID, uploadForm]);
+
 
     const defaultColDef = useMemo(() => ({
         sortable: true,
@@ -229,7 +229,7 @@ function closeReleaseInventoryModal() {
             suppressSizeToFit: true,
             maxWidth: 130,
         },
-      
+
         {
             headerName: "Reservation Status",
             field: "newStatus",
@@ -453,16 +453,16 @@ function closeReleaseInventoryModal() {
             headerName: "Sl.No",
             valueGetter: "node.rowIndex + 1",
             suppressSizeToFit: true,
-            maxWidth: 80,    
+            maxWidth: 80,
             autoHeaderHeight: true,
             wrapHeaderText: true,
         },
         {
             headerName: "Saln",
             field: "salutation",
-          //  editable: params => !params.data.bookingID, // Allow editing if bookingID is empty
+            //  editable: params => !params.data.bookingID, // Allow editing if bookingID is empty
             maxWidth: 100,
-            cellEditor: "agSelectCellEditor", 
+            cellEditor: "agSelectCellEditor",
             autoHeaderHeight: true,
             wrapHeaderText: true,
         },
@@ -561,7 +561,7 @@ function closeReleaseInventoryModal() {
             autoHeaderHeight: true,
             wrapHeaderText: true,
             tooltipField: "billingInstruction",
-                },
+        },
         // {
         //     headerName: "Actions",
         //     cellRendererFramework: (params) => (
@@ -636,7 +636,7 @@ function closeReleaseInventoryModal() {
             ),
             suppressSizeToFit: true,
             maxWidth: 148,
-            cellStyle: { 
+            cellStyle: {
                 textAlign: 'center',
                 whiteSpace: 'normal', // Allows wrapping
                 overflowWrap: 'break-word', // Breaks words when needed
@@ -652,12 +652,12 @@ function closeReleaseInventoryModal() {
                     style={{ width: 114 }}
                     disabled={(params.data.reservationStatus == 'Checked Out')}
                 >
-                 Booking Information
+                    Booking Information
                 </Button>
             ),
             suppressSizeToFit: true,
             maxWidth: 150,
-            cellStyle: { 
+            cellStyle: {
                 textAlign: 'center',
                 whiteSpace: 'normal', // Allows wrapping
                 overflowWrap: 'break-word', // Breaks words when needed
@@ -665,7 +665,7 @@ function closeReleaseInventoryModal() {
             },
             cellClass: 'vertical-center',
         },
-        
+
     ]);
     const gridOptions = {
         getRowStyle: (params) => {
@@ -678,7 +678,7 @@ function closeReleaseInventoryModal() {
 
 
 
-  
+
 
     // Rooming list entry for all guest details
     const [columnDefs6] = useState([
@@ -694,28 +694,28 @@ function closeReleaseInventoryModal() {
             headerName: "B_ID",
             field: "bookingID",
             valueGetter: (params) => {
-              if (params.data && params.data.bookingID && params.data.isMain === 0) {
-                return `${params.data.bookingID}*`;
-              }
-              return params.data.bookingID;
+                if (params.data && params.data.bookingID && params.data.isMain === 0) {
+                    return `${params.data.bookingID}*`;
+                }
+                return params.data.bookingID;
             },
             cellStyle: params => {
                 let borderColor = 'transparent'; // Default color for the border
-        
+
                 if (params.data.bookingID && (params.data.bookingID !== null)) {
-                  borderColor = '#f1c40f'; // Blue color
+                    borderColor = '#f1c40f'; // Blue color
                 }
-        
+
                 return {
-                  backgroundColor: borderColor,
-                  // borderLeft: `5px solid ${borderColor}`,
-                  // paddingLeft: '10px', // Add some left padding to separate content from border
+                    backgroundColor: borderColor,
+                    // borderLeft: `5px solid ${borderColor}`,
+                    // paddingLeft: '10px', // Add some left padding to separate content from border
                 };
-              },
+            },
             suppressSizeToFit: true,
             maxWidth: 102,
             filter: 'agTextColumnFilter'
-          },
+        },
         {
             headerName: "Room Type",
             field: "roomType",
@@ -1022,16 +1022,16 @@ function closeReleaseInventoryModal() {
                             setSharerData(resp['data'][0])
                         })
                 }
-                
+
                 else if (buttonName === 'Booking Information' && event.data.bookingID !== undefined) {
-                    console.log("event.data:",event.data)
+                    console.log("event.data:", event.data)
                     fetchx(API_URL + `/getReservationForFrontDeskByResID?reservationID=${event.data.id}`)
                         .then(result => result.json())
                         .then(resp => {
                             if (resp.data && resp.data[0]) {
 
-                                console.log("resp['data'][0]",resp['data'][0])
-                               
+                                console.log("resp['data'][0]", resp['data'][0])
+
                                 setBookingInformationData(resp['data'][0])
                                 setBookingInfoModRes(true);
                             } else {
@@ -1043,7 +1043,7 @@ function closeReleaseInventoryModal() {
                             console.error("Error:", error);
                         });
                 }
-                
+
             } else {
                 // console.log("Clicked element is not a button.");
             }
@@ -1098,17 +1098,17 @@ function closeReleaseInventoryModal() {
     const createReservationInBulk = () => {
         // setOpen1(true);
         let elapsedTime = 0;
-        
+
         // Start a timer to check if the response takes more than 5 seconds
         const messageTimeout = setTimeout(() => {
             setShowSecondaryMessage(true);
         }, 5000);
-    
+
         setIsUpdateWithRatesButton(true);
         const dataJson = JSON.stringify({
             groupID: reservationData.id
         });
-    
+
         // Start elapsed time counter
         const timerInterval = setInterval(() => {
             elapsedTime += 1;
@@ -1121,7 +1121,7 @@ function closeReleaseInventoryModal() {
                 }
             }
         }, 1000);
-    
+
         MySwal.fire({
             title: 'Reservation Creation under progress!!',
             html: `Please wait... Time elapsed: <span id="timer">0</span> seconds`,
@@ -1129,7 +1129,7 @@ function closeReleaseInventoryModal() {
             allowOutsideClick: false,
             showConfirmButton: false
         });
-    
+
         fetch(API_URL + "/createReservationFromStoredGroupData", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -1139,14 +1139,14 @@ function closeReleaseInventoryModal() {
             .then((data) => {
                 clearInterval(timerInterval);
                 clearTimeout(messageTimeout);
-    
+
                 if (data.statusCode === 403) {
                     setIsUpdateWithRatesButton(false);
                     handleError(data.message);
                     setOpen1(false);
                     return;
                 }
-    
+
                 if (data.statusCode === 200) {
                     setIsUpdateWithRatesButton(false);
                     MySwal.fire({
@@ -1154,9 +1154,9 @@ function closeReleaseInventoryModal() {
                         html: `Process completed!!`,
                         icon: 'success',
                         confirmButtonText: 'OK',
-                            })
+                    })
                 }
-    
+
                 // Refresh grid data with validated API response
                 return fetch(API_URL + "/getGroupResCompletedData", {
                     method: "POST",
@@ -1214,12 +1214,12 @@ function closeReleaseInventoryModal() {
     //     const interval = setInterval(() => {
     //         console.log(countdown); // Log the countdown to console or update UI
     //         countdown -= 1;
-    
+
     //         if (countdown <= 0) {
     //             clearInterval(interval); // Stop countdown when it reaches 0
     //         }
     //     }, 1000); // Decrement every second
-    
+
     //     fetch(API_URL + "/createReservationFromStoredGroupData", {
     //         method: "POST",
     //         headers: { "Content-Type": "application/json" },
@@ -1227,7 +1227,7 @@ function closeReleaseInventoryModal() {
     //     })
     //         .then((res) => res.json())
     //         .then((data) => {
-                
+
     //             if (data.statusCode === 403) {
     //                 setIsUpdateWithRatesButton(false)
     //                 handleError(data.message);
@@ -1909,7 +1909,7 @@ function closeReleaseInventoryModal() {
     }
 
 
-     const extrasModify = () => {
+    const extrasModify = () => {
         if (reservationData.status === 'Cancelled') {
             return handleError("This operation is not allowed")
         }
@@ -1923,17 +1923,17 @@ function closeReleaseInventoryModal() {
         setModificationLogs(!modificationLogs)
 
     }
-  
+
 
     const groupInfoModify = () => {
         if (reservationData.status === 'Cancelled') {
-          return handleError("This operation is not allowed");
+            return handleError("This operation is not allowed");
         }
-        
+
         // Assuming you have the company ID from the reservation data
         setSelectedCompanyId(reservationData.companyId);
         setGroupInfoMod(true);
-      };
+    };
 
 
     // Function handling payment type modifcation
@@ -2074,11 +2074,22 @@ function closeReleaseInventoryModal() {
     }
 
     const handleClose = () => {
-       // setIsModalOpen(false);
-       setBookingInfoModRes(false)
+        // setIsModalOpen(false);
+        setBookingInfoModRes(false)
     };
 
 
+    function refreshAPI() {
+        fetchx(API_URL + "/getGroupReservationBasedOnID", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reservationID: sessionStorage.getItem('groupReservationID') })
+        }).then(result => result.json())
+            .then(rowData => {
+                setReservationData(rowData["data"])
+            })
+
+    }
 
     // const handleFileUpload = (event) => {
     //     const file = event.target.files[0];
@@ -2090,14 +2101,14 @@ function closeReleaseInventoryModal() {
     //             const sheetName = workbook.SheetNames[0];
     //             const worksheet = workbook.Sheets[sheetName];
     //             const jsonData = XLSX.utils.sheet_to_json(worksheet);
-    
+
     //         // Helper function to convert Excel serial date to JavaScript date format
     //         const excelSerialToDate = (serial) => {
     //             const excelEpoch = new Date(1899, 11, 30); // Excel base date
     //             return new Date(excelEpoch.getTime() + (serial + 1) * 24 * 60 * 60 * 1000);
     //         };
-            
-    
+
+
     //             // Convert Arrival_date and Departure_date if they are in numeric format
     //             jsonData.forEach(row => {
     //                 if (typeof row.Arrival_date === 'number') {
@@ -2107,12 +2118,12 @@ function closeReleaseInventoryModal() {
     //                     row.Departure_date = excelSerialToDate(row.Departure_date).toISOString().split('T')[0];
     //                 }
     //             });
-    
+
     //             const requiredColumns = ["Room_Type", "Arrival_date", "Departure_date","numberOfAdults", "Salutation", "First_Name", "Last_Name", "Email_ID", "Phone_Number", "Salutation_Sharer1", "First_Name_Sharer1", "Last_Name_Sharer1", "Email_ID_Sharer1", "Phone_Number_Sharer1", "Salutation_Sharer2", "First_Name_Sharer2", "Last_Name_Sharer2", "Email_ID_Sharer2", "Phone_Number_Sharer2"];
     //             const invalidRows = jsonData.filter((row) => {
     //                 return requiredColumns.some(column => !row[column]);
     //             });
-    
+
     //             if (invalidRows.length > 0) {
     //                 setFileName();
     //                 handleError("The uploaded file contains rows with missing required data. Please check and try again.");
@@ -2145,16 +2156,16 @@ function closeReleaseInventoryModal() {
     //     }
     //     event.target.value = null;
     // };
-    
+
     // File upload option for room number assignment
-   
+
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
         if (file) {
             // Show backdrop immediately when file upload starts
             setOpen1(true);
             setShowSecondaryMessage(false);
-    
+
             const reader = new FileReader();
             reader.onload = async (e) => {
                 try {
@@ -2162,13 +2173,13 @@ function closeReleaseInventoryModal() {
                     const workbook = XLSX.read(data, { type: "array" });
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                     const jsonData = XLSX.utils.sheet_to_json(worksheet);
-    
+
                     // Helper function to convert Excel serial date to JavaScript date
                     const excelSerialToDate = (serial) => {
                         const excelEpoch = new Date(1899, 11, 30); // Excel base date
                         return new Date(excelEpoch.getTime() + (serial + 1) * 24 * 60 * 60 * 1000);
                     };
-    
+
                     // Convert Arrival_date and Departure_date if they are in numeric format
                     jsonData.forEach((row) => {
                         if (typeof row.Arrival_date === "number") {
@@ -2178,7 +2189,7 @@ function closeReleaseInventoryModal() {
                             row.Departure_date = excelSerialToDate(row.Departure_date).toISOString().split("T")[0];
                         }
                     });
-    
+
                     // Validate required columns
                     // const requiredColumns = [
                     //     "Room_Type",
@@ -2192,7 +2203,7 @@ function closeReleaseInventoryModal() {
                     // const invalidRows = jsonData.filter((row) =>
                     //     requiredColumns.some((column) => !row[column])
                     // );
-    
+
                     // if (invalidRows.length > 0) {
                     //     setFileName();
                     //     setFileNameList();
@@ -2202,47 +2213,47 @@ function closeReleaseInventoryModal() {
                     //     setOpen1(false);
                     //     return;
                     // }
-    
+
                     // // Set valid file and data
                     // setFileName(file.name);
-                    
+
                     // Simulate some processing time
                     setTimeout(() => {
                         setFileData(jsonData);
-                        
+
                         // Close backdrop after data is set
                         setOpen1(false);
-    
+
                         // Show secondary message for large datasets
                         if (jsonData.length > 50) {
                             setShowSecondaryMessage(true);
                         }
                     }, 1000);
-    
+
                 } catch (error) {
                     console.error("Error processing file:", error);
-                    
+
                     // Close backdrop on error
                     setOpen1(false);
-                    
+
                     // Handle error (show error message)
                     handleError("Error processing the uploaded file");
                 }
             };
-    
+
             reader.onerror = (error) => {
                 console.error("File reading error:", error);
-                
+
                 // Close backdrop on error
                 setOpen1(false);
-                
+
                 handleError("Error reading the uploaded file");
             };
-    
+
             reader.readAsArrayBuffer(file);
         }
     };
-    
+
 
     const handleValidateAndFetchGridData = (jsonData) => {
         if (tempData && tempData.length > 0) {
@@ -2462,7 +2473,7 @@ function closeReleaseInventoryModal() {
     //     // Create a new workbook using ExcelJS
     //     let workbook = new ExcelJS.Workbook();
     //     let worksheet = workbook.addWorksheet('Reservations');
-    
+
     //     // Define columns and add the data
     //     worksheet.columns = [
     //         { header: 'Room_Type', key: 'Room_Type', width: 10 },
@@ -2485,50 +2496,50 @@ function closeReleaseInventoryModal() {
     //         { header: 'Email_ID_Sharer2', key: 'Email_ID_Sharer2', width: 25 },
     //         { header: 'Phone_Number_Sharer2', key: 'Phone_Number_Sharer2', width: 15 }
     //     ];
-   
-    
+
+
     //     // Create a binary string representation of the workbook
     //     let buffer = await workbook.xlsx.writeBuffer();
-    
+
     //     // Create a Blob from the binary string
     //     let blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-    
+
     //     // Create a link element and trigger a download
     //     let link = document.createElement("a");
     //     link.href = URL.createObjectURL(blob);
     //     link.download = "Sample_Rooming_List.xlsx";
     //     document.body.appendChild(link);
     //     link.click();
-    
+
     //     // Clean up and remove the link
     //     document.body.removeChild(link);
     // }
-   
+
     //Added on 18/12/2024
     async function DownloadSampleExcel() {
         try {
             // Fetch sample data from the API
-            const response = await fetch(API_URL+'/getGroupReservationSampleDataForExcel', {
+            const response = await fetch(API_URL + '/getGroupReservationSampleDataForExcel', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    reservationID: reservationData.id 
+                    reservationID: reservationData.id
                 }),
-                
+
             });
-    
+
             if (!response.ok) {
                 throw new Error(`Error: ${response.statusText}`);
             }
-    
+
             const { data } = await response.json();
 
-          
+
             let workbook = new ExcelJS.Workbook();
             let worksheet = workbook.addWorksheet('Reservations');
-    
+
             // Define columns
             worksheet.columns = [
                 { header: 'Room_Type', key: 'Room_Type', width: 10 },
@@ -2551,7 +2562,7 @@ function closeReleaseInventoryModal() {
                 { header: 'Email_ID_Sharer2', key: 'Email_ID_Sharer2', width: 25 },
                 { header: 'Phone_Number_Sharer2', key: 'Phone_Number_Sharer2', width: 15 }
             ];
-    
+
             // Populate rows with data from API
             data.forEach((item, index) => {
                 worksheet.addRow({
@@ -2559,7 +2570,7 @@ function closeReleaseInventoryModal() {
                     Arrival_date: 'DD/MM/YYYY',
                     Departure_date: 'DD/MM/YYYY',
                     Number_Of_Adults: '1',
-                    Salutation: 'Mr.', 
+                    Salutation: 'Mr.',
                     First_Name: `Sample First Name ${index + 1}`,
                     Last_Name: `Sample Last Name ${index + 1}`,
                     Email_ID: '',
@@ -2576,20 +2587,20 @@ function closeReleaseInventoryModal() {
                     Phone_Number_Sharer2: ''
                 });
             });
-    
+
             // Create a binary string representation of the workbook
             let buffer = await workbook.xlsx.writeBuffer();
-    
+
             // Create a Blob from the binary string
             let blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-    
+
             // Create a link element and trigger a download
             let link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
             link.download = "Sample_Rooming_List.xlsx";
             document.body.appendChild(link);
             link.click();
-    
+
             // Clean up and remove the link
             document.body.removeChild(link);
         } catch (error) {
@@ -2597,8 +2608,8 @@ function closeReleaseInventoryModal() {
             handleError('Failed to download the sample Excel. Please try again.');
         }
     }
-    
- function AssignRoomOnRoomingListUpload() {
+
+    function AssignRoomOnRoomingListUpload() {
         let dataJson = JSON.stringify({
             reservationID: reservationData.id,
             jsonData: definiteReservationData
@@ -2635,7 +2646,7 @@ function closeReleaseInventoryModal() {
 
 
     const [latestInventory, setLatestInventory] = useState();
-  // const [options3, setOptions3] = useState();
+    // const [options3, setOptions3] = useState();
     const [options2, setOptions2] = useState();
     const [arrivalDate, setArrivalDate] = useState();
     const [departureDate, setDepartureDate] = useState()
@@ -2741,13 +2752,13 @@ function closeReleaseInventoryModal() {
             body: JSON.stringify({
                 sharingID: sharerData.sharingID,
                 comment: data.comment1 || sharerData.comments,
-                billingInstruction: data.billingInstructions1 || sharerData.billingInstruction ,
+                billingInstruction: data.billingInstructions1 || sharerData.billingInstruction,
             }),
         })
             .then((res) => res.json())
             .then((postres) => {
                 if (postres.status === 'Success') {
-    
+
                     // Display SweetAlert notification
                     Swal.fire({
                         title: 'Success!',
@@ -2757,10 +2768,10 @@ function closeReleaseInventoryModal() {
                     }).then(() => {
                         // Close the modal (assuming modal close function is closeModal)
                         setInstructionForm(false);
-    
+
                         // Call the desired function
-                       // callDefiniteReservation();
-                       navigate()
+                        // callDefiniteReservation();
+                        navigate()
                     });
                 } else {
                     Swal.fire({
@@ -2781,7 +2792,7 @@ function closeReleaseInventoryModal() {
                 console.error('Error updating instructions:', error);
             });
     };
-    
+
 
     // Default dates setting based on business date
     useEffect(() => {
@@ -2967,78 +2978,78 @@ function closeReleaseInventoryModal() {
                 </Modal>}
             </div>
 
-             {/* Billing & Instruction modal */}
-             <div>
+            {/* Billing & Instruction modal */}
+            <div>
                 {sharerData && <Modal isOpen={instructionForm} toggle={() => setInstructionForm(!instructionForm)} className="modal-lg">
                     <ModalHeader className="modal-lg" toggle={() => { setInstructionForm(!instructionForm) }}>
-                       Billing & Instruction
+                        Billing & Instruction
                     </ModalHeader>
                     <ModalBody className="modal-lg"  >
-                    <Card>
-                        <CardBody>
-                            <Form onSubmit={handleSubmit(updateInstructions)}>
-                                <Row>
-                                    {sharerData.comments &&
-                                       
-                            <Col md='4' sm='8'>
-                            <div className='mb-1'>
-                                <Label className='form-label' for='comment1'>
-                                    Comment
-                                </Label>
-                                <Controller
-                                    control={control}
-                                    id='comment1'
-                                    name='comment1'
-                                    render={({ field }) =>
-                                        <Input
-                                            type='textarea'
-                                            placeholder='Comment'
-                                           
-                                            defaultValue={sharerData.comments}
-                                            {...field}
-                                        
-                                        />
-                                    }
-                                />
-                            </div>
-                        </Col>
-                                    }
+                        <Card>
+                            <CardBody>
+                                <Form onSubmit={handleSubmit(updateInstructions)}>
+                                    <Row>
+                                        {sharerData.comments &&
 
-                                    {sharerData.billingInstruction &&
-                                        <Col md='4' sm='8'>
-                                        <div className='mb-1'>
-                                            <Label className='form-label' for='billingInstructions1'>
-                                                Billing Instructions
-                                            </Label>
-                                            <Controller
-                                                // defaultValue=''
-                                                control={control}
-                                                id='billingInstructions1'
-                                                name='billingInstructions1'
-                                                render={({ field }) =>
-                                                    <Input
-                                                        type='textarea'
-                                                        placeholder='Billing Instruction'
-                                                      //  invalid={errors.billingInstructions && true}
-                                                        defaultValue={sharerData.billingInstruction}
-                                                        {...field}
+                                            <Col md='4' sm='8'>
+                                                <div className='mb-1'>
+                                                    <Label className='form-label' for='comment1'>
+                                                        Comment
+                                                    </Label>
+                                                    <Controller
+                                                        control={control}
+                                                        id='comment1'
+                                                        name='comment1'
+                                                        render={({ field }) =>
+                                                            <Input
+                                                                type='textarea'
+                                                                placeholder='Comment'
+
+                                                                defaultValue={sharerData.comments}
+                                                                {...field}
+
+                                                            />
+                                                        }
                                                     />
-                                                }
-                                            />
-                                        </div>
-                                    </Col>
-                                    }
-                                </Row>  
-                                <div align='end'>
-                                    <Button color='primary' className='me-1' type='submit'>
-                                        Update
-                                    </Button>
-                                    </div>  
-                            </Form>
-                            
-                        </CardBody>
-                    </Card>
-                </ModalBody>
+                                                </div>
+                                            </Col>
+                                        }
+
+                                        {sharerData.billingInstruction &&
+                                            <Col md='4' sm='8'>
+                                                <div className='mb-1'>
+                                                    <Label className='form-label' for='billingInstructions1'>
+                                                        Billing Instructions
+                                                    </Label>
+                                                    <Controller
+                                                        // defaultValue=''
+                                                        control={control}
+                                                        id='billingInstructions1'
+                                                        name='billingInstructions1'
+                                                        render={({ field }) =>
+                                                            <Input
+                                                                type='textarea'
+                                                                placeholder='Billing Instruction'
+                                                                //  invalid={errors.billingInstructions && true}
+                                                                defaultValue={sharerData.billingInstruction}
+                                                                {...field}
+                                                            />
+                                                        }
+                                                    />
+                                                </div>
+                                            </Col>
+                                        }
+                                    </Row>
+                                    <div align='end'>
+                                        <Button color='primary' className='me-1' type='submit'>
+                                            Update
+                                        </Button>
+                                    </div>
+                                </Form>
+
+                            </CardBody>
+                        </Card>
+                    </ModalBody>
                 </Modal>}
 
 
@@ -3049,12 +3060,12 @@ function closeReleaseInventoryModal() {
             <div>
                 {reservationData && <Modal isOpen={openReleaseInventory} toggle={() => setOpenReleaseInventory(!openReleaseInventory)} className="modal-xl">
                     <ModalHeader className="modal-lg" toggle={() => { setOpenReleaseInventory(!openReleaseInventory) }}>
-                    <h2 style={{ fontSize: '18px', fontWeight: 'bold' }}>Group Washout Inventory</h2>
-                    <p style={{ fontSize: '12px' }}>Wash out the pending room inventory</p>
-                    
-                                        </ModalHeader>
+                        <h2 style={{ fontSize: '18px', fontWeight: 'bold' }}>Group Washout Inventory</h2>
+                        <p style={{ fontSize: '12px' }}>Wash out the pending room inventory</p>
+
+                    </ModalHeader>
                     <ModalBody className="pb-3 px-sm-2 mx-20">
-                    
+
                         <p>
                             <Row>
                                 <Col md='3' sm='12'>
@@ -3290,36 +3301,36 @@ function closeReleaseInventoryModal() {
 
 
             {/* Confirmation to create reservation via file */}
-         
 
-            
+
+
 
             <Modal
-  isOpen={uploadForm}
-  toggle={() => {
-    setUploadForm(!uploadForm);
-    setFileData(null); 
-    setFileName("");  
-  }}
-  className="modal-xl"
->
-  <ModalHeader
-    toggle={() => {
-      setUploadForm(!uploadForm);
-      setFileData(null);
-      setFileName("");   
-    }}
-  >
-    Guest Details Upload Page
-  </ModalHeader>
-  <ModalBody className="pb-3 px-sm-2 mx-20">
-    {/* Upload Button and File Input */}
-    <div align="end" className="mb-3">
-      <Button color="primary" className="me-1" onClick={DownloadSampleExcel}>
-        Download Sample Excel
-      </Button>
-    </div>
-    {/* <Col md="4" sm="12" className="mb-3">
+                isOpen={uploadForm}
+                toggle={() => {
+                    setUploadForm(!uploadForm);
+                    setFileData(null);
+                    setFileName("");
+                }}
+                className="modal-xl"
+            >
+                <ModalHeader
+                    toggle={() => {
+                        setUploadForm(!uploadForm);
+                        setFileData(null);
+                        setFileName("");
+                    }}
+                >
+                    Guest Details Upload Page
+                </ModalHeader>
+                <ModalBody className="pb-3 px-sm-2 mx-20">
+                    {/* Upload Button and File Input */}
+                    <div align="end" className="mb-3">
+                        <Button color="primary" className="me-1" onClick={DownloadSampleExcel}>
+                            Download Sample Excel
+                        </Button>
+                    </div>
+                    {/* <Col md="4" sm="12" className="mb-3">
       <Label className="form-label" htmlFor="attachments">
         Upload Guest Details
       </Label>
@@ -3358,65 +3369,65 @@ function closeReleaseInventoryModal() {
       </Button>
     </Col> */}
 
-    {/* //Added on 18/12/2024 */}
-    <Col md="4" sm="12" className="mb-3">
-  <Label className="form-label" htmlFor="attachments">
-    Upload Guest Details
-  </Label>
+                    {/* //Added on 18/12/2024 */}
+                    <Col md="4" sm="12" className="mb-3">
+                        <Label className="form-label" htmlFor="attachments">
+                            Upload Guest Details
+                        </Label>
 
-  <Controller
-    defaultValue=""
-    control={control}
-    name="attachments"
-    render={({ field }) => (
-      <Input
-        type="file"
-        accept=".xlsx, .xls"
-        placeholder={fileName ? fileName : "Upload file"}
-        onChange={(e) => {
-          const file = e.target.files[0];
-          handleFileUpload(e);
-          field.onChange(e); 
-
-         
-          setFileData(null);
-
-         
-          if (file) {
-            setFileName(file.name);
-          }
-        }}
-        innerRef={fileInputRef}
-      />
-    )}
-  />
-
-  <Button
-    color="primary"
-    className="mt-2"
-    disabled={!fileData || fileData.length === 0 || !fileName}
-    onClick={() => handleValidateAndFetchGridData(fileData)}
-  >
-    Upload
-  </Button>
-</Col>
+                        <Controller
+                            defaultValue=""
+                            control={control}
+                            name="attachments"
+                            render={({ field }) => (
+                                <Input
+                                    type="file"
+                                    accept=".xlsx, .xls"
+                                    placeholder={fileName ? fileName : "Upload file"}
+                                    onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        handleFileUpload(e);
+                                        field.onChange(e);
 
 
-    {/* AG Grid Section */}
-    <div className="ag-theme-alpine mt-4" style={{ height: 500 }}>
-      <AgGridReact
-        ref={gridRef2}
-        rowData={tempData}
-        columnDefs={columnDefs6}
-        defaultColDef={defaultColDef}
-        pagination={true}
-        paginationPageSize={10}
-        rowSelection="multiple"
-        animateRows={true}
-        singleClickEdit={true}
-        onCellClicked={cellClickedListener2}
-      />
-    </div>
+                                        setFileData(null);
+
+
+                                        if (file) {
+                                            setFileName(file.name);
+                                        }
+                                    }}
+                                    innerRef={fileInputRef}
+                                />
+                            )}
+                        />
+
+                        <Button
+                            color="primary"
+                            className="mt-2"
+                            disabled={!fileData || fileData.length === 0 || !fileName}
+                            onClick={() => handleValidateAndFetchGridData(fileData)}
+                        >
+                            Upload
+                        </Button>
+                    </Col>
+
+
+                    {/* AG Grid Section */}
+                    <div className="ag-theme-alpine mt-4" style={{ height: 500 }}>
+                        <AgGridReact
+                            ref={gridRef2}
+                            rowData={tempData}
+                            columnDefs={columnDefs6}
+                            defaultColDef={defaultColDef}
+                            pagination={true}
+                            paginationPageSize={10}
+                            rowSelection="multiple"
+                            animateRows={true}
+                            singleClickEdit={true}
+                            onCellClicked={cellClickedListener2}
+                        />
+                    </div>
 
                     {/* Create Reservations Button */}
                     <div align="end" className="mt-3">
@@ -3441,41 +3452,41 @@ function closeReleaseInventoryModal() {
                         Rooming List
                     </ModalHeader>
                     <ModalBody className="pb-3 px-sm-2 mx-20">
-    <div className="d-flex justify-content-end mb-2">
-        <Button color="primary" onClick={() => setNewReservationModal(true)}>
-            Add New Reservation
-        </Button>
-    </div>
-    <div className="ag-theme-alpine" style={{ height: 660 }}>
-        <AgGridReact
-            ref={gridRef2}
-            rowData={definiteData}
-            columnDefs={columnDefs3}
-            animateRows={true}
-            rowSelection="multiple"
-            onCellClicked={cellClickedListener2}
-            paginationPageSize={10}
-            singleClickEdit={true}
-            pagination={true}
-            defaultColDef={defaultColDef}
-            gridOptions={gridOptions}
-            headerColor="ddw-primary"
-        />
-    </div>
-    <br />
-    <div className="d-flex justify-content-end">
-        <Button color="primary" className="me-1" onClick={() => setDefiniteOptions(false)}>
-            Close
-        </Button>
-    </div>
+                        <div className="d-flex justify-content-end mb-2">
+                            <Button color="primary" onClick={() => setNewReservationModal(true)}>
+                                Add New Reservation
+                            </Button>
+                        </div>
+                        <div className="ag-theme-alpine" style={{ height: 660 }}>
+                            <AgGridReact
+                                ref={gridRef2}
+                                rowData={definiteData}
+                                columnDefs={columnDefs3}
+                                animateRows={true}
+                                rowSelection="multiple"
+                                onCellClicked={cellClickedListener2}
+                                paginationPageSize={10}
+                                singleClickEdit={true}
+                                pagination={true}
+                                defaultColDef={defaultColDef}
+                                gridOptions={gridOptions}
+                                headerColor="ddw-primary"
+                            />
+                        </div>
+                        <br />
+                        <div className="d-flex justify-content-end">
+                            <Button color="primary" className="me-1" onClick={() => setDefiniteOptions(false)}>
+                                Close
+                            </Button>
+                        </div>
 
-    <NewReservationForm 
-        isOpen={newReservationModal}
-        toggle={() => setNewReservationModal(!newReservationModal)}
-        reservationData={reservationData}
-        callDefiniteReservation = {callDefiniteReservation}
-    />
-</ModalBody>
+                        <NewReservationForm
+                            isOpen={newReservationModal}
+                            toggle={() => setNewReservationModal(!newReservationModal)}
+                            reservationData={reservationData}
+                            callDefiniteReservation={callDefiniteReservation}
+                        />
+                    </ModalBody>
                 </Modal>
             </div>}
 
@@ -3652,13 +3663,13 @@ function closeReleaseInventoryModal() {
                                         {reservationData && reservationData.status === 'Definite' && <div onClick={bookingInfoModify} className="hoverUnderline" >
                                             Modify Booking information.
                                         </div>}
-                                         {reservationData && reservationData.status === 'Definite' && <div onClick={extrasModify} className="hoverUnderline" >
+                                        {reservationData && reservationData.status === 'Definite' && <div onClick={extrasModify} className="hoverUnderline" >
                                             Modify Extras
                                         </div>}
                                         {reservationData && reservationData.status === 'Definite' && <div onClick={() => setOpenReleaseInventory(!openReleaseInventory)} className="hoverUnderline" >
                                             Washout Inventory
                                         </div>}
-					 {reservationData && reservationData.status === 'Definite' && <div onClick={groupInfoModify} className="hoverUnderline" >
+                                        {reservationData && reservationData.status === 'Definite' && <div onClick={groupInfoModify} className="hoverUnderline" >
                                             Modify Group information.
                                         </div>}
 
@@ -3673,8 +3684,8 @@ function closeReleaseInventoryModal() {
                                                 Upload Guest Details
                                             </div>}
 
-                                            {reservationData  && <div onClick={() => {
-                                            if (reservationData.status === 'Cancelled'  || reservationData.status === 'Checked In' || reservationData.status === 'Checked Out') {
+                                        {reservationData && <div onClick={() => {
+                                            if (reservationData.status === 'Cancelled' || reservationData.status === 'Checked In' || reservationData.status === 'Checked Out') {
                                                 return handleError("This operation is not allowed")
                                             }
                                             setInvOpen(!invOpen)
@@ -3711,8 +3722,8 @@ function closeReleaseInventoryModal() {
                                             Modify Booking information.
                                         </div>}
 
-                                         {/* Modification Logs */}
-                                         {reservationData && (reservationData.status === 'Definite' || reservationData.status === 'Tentative') && <div onClick={groupModificationLogs} className="hoverUnderline">
+                                        {/* Modification Logs */}
+                                        {reservationData && (reservationData.status === 'Definite' || reservationData.status === 'Tentative') && <div onClick={groupModificationLogs} className="hoverUnderline">
                                             Modification Logs
                                         </div>}
 
@@ -3825,7 +3836,7 @@ function closeReleaseInventoryModal() {
 
 
 
-             {/* Booking information modification for Individual reservatuion*/}
+            {/* Booking information modification for Individual reservatuion*/}
             {reservationData !== "" && <Modal
                 isOpen={bookingInfoModRes}
                 //toggle={() => setBookingInfoModRes(!bookingInfoModRes)}
@@ -3837,18 +3848,18 @@ function closeReleaseInventoryModal() {
                     Modify Booking Information
                 </ModalHeader>
                 <ModalBody className="modal-lg">
-                    <ModifyBookingInfoForRes data1={bookingInformationData}  onClose={handleClose}  callDefiniteReservation={callDefiniteReservation}/>
+                    <ModifyBookingInfoForRes data1={bookingInformationData} onClose={handleClose} callDefiniteReservation={callDefiniteReservation} />
 
                 </ModalBody>
             </Modal>}
 
 
-             {/* modification logs modal */}
-             {reservationData !== "" && <Modal
+            {/* modification logs modal */}
+            {reservationData !== "" && <Modal
                 isOpen={modificationLogs}
                 toggle={() => setModificationLogs(!modificationLogs)}
                 className="modal-lg"
-             style={{ maxWidth: '1400px', maxHeight: '60vh' }}
+                style={{ maxWidth: '1400px', maxHeight: '60vh' }}
             >
                 <ModalHeader toggle={() => setModificationLogs(!modificationLogs)} className="modal-lg">
                     Modification Logs
@@ -3859,23 +3870,23 @@ function closeReleaseInventoryModal() {
                 </ModalBody>
             </Modal>}
 
-        
-{reservationData !== "" && (
-    <GroupInformationModal 
-        reservationData={reservationData}
-        isOpen={groupInfoMod}
-        toggle={() => setGroupInfoMod(!groupInfoMod)}
-    />
-)}
+
+            {reservationData !== "" && (
+                <GroupInformationModal
+                    reservationData={reservationData}
+                    isOpen={groupInfoMod}
+                    toggle={() => setGroupInfoMod(!groupInfoMod)}
+                />
+            )}
 
 
 
-            
 
-            
+
+
             <div>
                 {reservationData && (
-                    <Modal isOpen={options3} toggle={() => setOptions3(!options3)} className="modal-xl"  style={{ maxWidth: '800px', width: '800px', margin: 'auto' }}>
+                    <Modal isOpen={options3} toggle={() => setOptions3(!options3)} className="modal-xl" style={{ maxWidth: '800px', width: '800px', margin: 'auto' }}>
                         <ModalHeader className="modal-lg" toggle={() => { setOptions3(!options3); }}>
                             Add Room Rates
                         </ModalHeader>
@@ -4102,7 +4113,7 @@ function closeReleaseInventoryModal() {
 
             </div>
 
-            
+
             {/* Group revenue details */}
             {reservationData !== "" &&
                 <Modal
@@ -4147,7 +4158,7 @@ function closeReleaseInventoryModal() {
 
 
 
-  {reservationData !== "" && <Modal
+            {reservationData !== "" && <Modal
                 isOpen={extraMod}
                 toggle={() => setExtraMod(!extraMod)}
                 className="modal-lg"
@@ -4157,7 +4168,7 @@ function closeReleaseInventoryModal() {
                     Modify Extras
                 </ModalHeader>
                 <ModalBody className="modal-lg">
-                    <ExtraModification data1={reservationData} />
+                    <ExtraModification data1={reservationData} refreshAPI={refreshAPI}/>
 
                 </ModalBody>
             </Modal>}

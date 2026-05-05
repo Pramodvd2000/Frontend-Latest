@@ -461,6 +461,21 @@ export default [
     ]
   },
 
+  {
+    id: 'MobileAppConfig',
+    title: 'Mobile App Config',
+    icon: <CreditCard size={12} />,
+    children: [
+      {
+        id: 'Rate Code Discount',
+        title: 'Rate Code Discount',
+        icon: <Circle size={12} />,
+        navLink: '/dashboard/mobileAppConfig/rateCodeDiscount'
+      },
+     
+    ]
+  },
+
   // Forex tab
   {
     id: 'Forex',

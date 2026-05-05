@@ -1113,6 +1113,17 @@ const AllTentativeReservations = () => {
     }, []);
 
 
+     function refreshAPI() {
+        fetchx(API_URL + "/getGroupReservationBasedOnID", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reservationID: sessionStorage.getItem('groupReservationID') })
+        }).then(result => result.json())
+            .then(rowData => {
+                setReservationData(rowData["data"])
+            })
+
+    }
     return (
         <div>
 
@@ -1790,7 +1801,7 @@ const AllTentativeReservations = () => {
                     Modify Extras
                 </ModalHeader>
                 <ModalBody className="modal-lg">
-                    <ExtraModification data1={reservationData} />
+                    <ExtraModification data1={reservationData} refreshAPI={refreshAPI}/>
 
                 </ModalBody>
             </Modal>}

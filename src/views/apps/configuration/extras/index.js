@@ -22,6 +22,7 @@ import { Accordion, AccordionBody, AccordionHeader, AccordionItem,UncontrolledAc
 import API_URL from "../../../../config";
 const id = '1';
 import ExtraGroupMapping from "./datagrid"
+import ExtraGroupEdit from "./extraGroupEdit"
 const typeOptions = [
   { value: 'Percentage', label: 'Percentage' },
   { value: 'Amount', label: 'Amount' },
@@ -72,6 +73,9 @@ const Extras = () => {
   const [value, setValue] = useState('')
   const { reset, handleSubmit, control ,formState: { errors }} = useForm({ defaultValues });
   const [filldata, setfilldata] = useState({});
+  const [extraFilldata, setExtrafilldata] = useState({});
+    const [showEdit, editButton] = useState(false);
+
 
   const handleDropdownChange = (event) => {
     setSelectedOption(event.value);
@@ -100,12 +104,19 @@ const Extras = () => {
   const [columnDefs, setColumnDefs] = useState([
     {headerName: 'Extra Code',field: 'extraCode',suppressSizeToFit: true,cellStyle: {'text-align': 'center','background-color': '#F1E39B'}, maxWidth: 140 },
     {headerName: 'Description',field: 'description',suppressSizeToFit: true,cellStyle: {'text-align': 'center','background-color': 'pink'}, maxWidth: 140 },
+    // {headerName: 'Extra Group',field: 'extraGroupName',suppressSizeToFit: true,cellStyle: {'text-align': 'center','background-color': '#F1E39B'}, maxWidth: 140 },
+    
     {headerName: 'Type',field: 'type',suppressSizeToFit: true,cellStyle: {'text-align': 'center','background-color': '#F1E39B'}, maxWidth: 140 },
     {
       headerName: "Action",field: "numAvlRooms",suppressSizeToFit: true, maxWidth: 120,
       cellRendererFramework: (params) => (
         <Button color="primary" onClick={() => actionButton(!show)}> View  </Button> ),
     },
+    //  {
+    //         headerName: "Action", field: "numAvlRooms", suppressSizeToFit: true, width: 160,
+    //         cellRendererFramework: (params) => (
+    //             <Button color="primary" onClick={() => {setExtrafilldata(params.data), editButton(true)}}> Edit Group </Button>),
+    //     },
     // {headerName: 'Percentage',field: 'percentage'},
     // {headerName: 'Amount',field: 'amount'},
     // {headerName: 'Pieces',field: 'pieces'},
@@ -127,6 +138,8 @@ const Extras = () => {
     console.log(event["data"])
     setExtraData(event['data'])
     setfilldata(event['data']['id'])
+    setExtrafilldata(event['data'])
+    
   }, []);
 
   useEffect(() => {
@@ -623,6 +636,29 @@ const Extras = () => {
             />
       </div>
   
+   <Card>
+                <div className="vertically-centered-modal">
+                    <Modal
+                        isOpen={showEdit}
+                        toggle={() => editButton(!showEdit)}
+                        // className="modal-lg"
+                        className="modal-sm"
+
+                    >
+                        <ModalHeader toggle={() => editButton(!showEdit)}>
+                            {/* Welcome... */}
+                        </ModalHeader>
+                        <ModalBody>
+                            <Card>
+                                <ExtraGroupEdit data1={extraFilldata} />
+
+                            </Card>
+                        </ModalBody>
+
+                    </Modal>
+                </div>
+            </Card>
+
     </div>
   );
 };

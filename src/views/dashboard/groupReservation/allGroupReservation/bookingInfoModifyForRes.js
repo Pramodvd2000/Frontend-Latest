@@ -1065,7 +1065,7 @@ const ModifyBookingInfoForRes = ( { data1, onClose, callDefiniteReservation } ) 
                             </Col>
 
                             {/* Extras Options */}
-                            <Col md='4' sm='8'>
+                            {/* <Col md='4' sm='8'>
                                 <div className='mb-1'>
                                     <Label className='form-label' for='extras1' >
                                         Select Extra
@@ -1089,7 +1089,7 @@ const ModifyBookingInfoForRes = ( { data1, onClose, callDefiniteReservation } ) 
                                         )}
                                     />
                                 </div>
-                            </Col>
+                            </Col> */}
 
 
                             {/* Features Options */}

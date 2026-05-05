@@ -205,6 +205,7 @@ const PendingCutomernIRDOrders = lazy(() => import('../../views/apps/PendingCuto
 const CreateRestaurant = lazy(() => import('../../views/apps/pos_configuration/CreateNewStore'))
 const Industry = lazy(() => import('../../views/apps/configuration/industry'))
 const WeekendPricing = lazy(() => import('../../views/apps/configuration/WeekendPricing'))
+const ExtraGroups = lazy(() => import('../../views/apps/configuration/extraGroup'))
 
 
 const AppRoutes = [
@@ -712,13 +713,31 @@ const AppRoutes = [
       className: 'configuration-application'
     }
   },
+      {
+    element: <ExtraGroups/>,
+    path: '/apps/configuration/extraGroup',
+    meta: {
+      // appLayout: true,
+      className: 'configuration-application'
+    }
+  },
   {
     element: <Extras />,
     path: '/apps/configuration/extras',
     meta: {
       // appLayout: true,
       className: 'configuration-application'
-    }
+    }         
+
+
+         
+
+
+
+
+
+
+    
   },
   {
     element: <Reason />,

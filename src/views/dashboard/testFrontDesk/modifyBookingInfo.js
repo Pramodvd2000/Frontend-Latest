@@ -1003,7 +1003,7 @@ const ModifyBookingInfo = (data1) => {
           </Col>
 
           {/* Extras Options */}
-          {/* <Col md='4' sm='8'>
+          <Col md='4' sm='8'>
             <div className='mb-1'>
               <Label className='form-label' for='extras' >
                 Select Extra
@@ -1028,7 +1028,7 @@ const ModifyBookingInfo = (data1) => {
                 )}
               />
             </div>
-          </Col> */}
+          </Col>
 
 
 

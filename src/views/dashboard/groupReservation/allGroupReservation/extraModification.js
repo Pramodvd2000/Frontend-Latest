@@ -39,7 +39,7 @@ const defaultValues = {
   isActive: null
 };
 
-const Extras = ({ data1 }) => {
+const Extras = ({ data1, refreshAPI }) => {
   console.log(data1)
   const [open, setOpen] = useState('')
   const toggle = id => { open === id ? setOpen() : setOpen(id) }
@@ -345,6 +345,7 @@ const Extras = ({ data1 }) => {
                     setExtraName(resp['data'])
                     //console.log(extraName)
                   })
+                  refreshAPI()
             setConfirmSubmit(false)
           handleSuccess({ title: "Extra Added Successfully", text: "The extra has been added to the reservation successfully." })
         } else {
