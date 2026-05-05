@@ -153,7 +153,7 @@ const RateCodeDiscount = () => {
         {
             headerName: 'Discount Description',
             field: 'discountDescription',
-            flex: 1
+            // flex: 1
         },
         {
             headerName: 'Actions',
@@ -215,10 +215,17 @@ const RateCodeDiscount = () => {
                 console.log('Insert Response:', res);
                 if (res.statusCode === 200) {
                     handleSuccess('Rate Code Discount Added Successfully!');
-                    resetInsert();
+                    setSelectedRow(null);
+                    resetInsert({ rateCodeID: null, percentageDiscount: '', discountDescription: '' })
                     fetchData();
+                    setOpen('')
                 } else {
+                    setOpen('')
+                    setSelectedRow(null);
+                    resetInsert({ rateCodeID: null, percentageDiscount: '', discountDescription: '' })
                     handleError(res.message);
+                    resetInsert();
+
                 }
             })
             .catch(err => {
@@ -240,7 +247,7 @@ const RateCodeDiscount = () => {
 
         console.log('Update Payload:', payload);
 
-        fetchx(API_URL + '/addRateCodeDiscount', {
+        fetchx(API_URL + '/updateRateCodeDiscount', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: payload
@@ -467,7 +474,7 @@ const RateCodeDiscount = () => {
                         </Row>
 
                         <div className="d-flex">
-                            <Button className="me-1" color="primary" type="submit">
+                            <Button className="me-1" color="primary" type='submit'>
                                 Submit
                             </Button>
                             <Button

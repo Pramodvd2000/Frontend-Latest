@@ -452,12 +452,12 @@ export default [
         icon: <Circle size={12} />,
         navLink: '/dashboard/BookingEngineConfig/roomDetails'
       },
-      {
-        id: 'Room Type Images',
-        title: 'Room Type Images',
-        icon: <Circle size={12} />,
-        navLink: '/dashboard/BookingEngineConfig/roomTypeImages'
-      },
+      // {
+      //   id: 'Room Type Images',
+      //   title: 'Room Type Images',
+      //   icon: <Circle size={12} />,
+      //   navLink: '/dashboard/BookingEngineConfig/roomTypeImages'
+      // },
     ]
   },
 
@@ -471,6 +471,18 @@ export default [
         title: 'Rate Code Discount',
         icon: <Circle size={12} />,
         navLink: '/dashboard/mobileAppConfig/rateCodeDiscount'
+      },
+         {
+        id: 'Room Type Images',
+        title: 'Room Type Images',
+        icon: <Circle size={12} />,
+        navLink: '/dashboard/BookingEngineConfig/roomTypeImages'
+      },
+       {
+        id: 'App Packages',
+        title: 'App Only Packages',
+        icon: <Circle size={12} />,
+        navLink: '/dashboard/mobileAppConfig/mobileBookingEnginePackage'
       },
      
     ]
